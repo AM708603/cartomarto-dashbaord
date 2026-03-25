@@ -8,3 +8,6 @@ compatibility_date = "2025-01-01"
 binding = "DB"
 database_name = "cartomarto-db"
 database_id = "3ce47173-0faf-42d6-b267-5efb19f27cca"
+
+# No other dependencies needed!
+

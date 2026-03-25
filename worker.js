@@ -1,9 +1,6 @@
-// worker.js - CartoMarto Backend API
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
+// worker.js - CartoMarto Backend API (No external dependencies)
 
-const app = new Hono();
-app.use('/api/*', cors());
+// ==================== AUTH FUNCTIONS ====================
 
 // Your users
 const USERS = [
@@ -26,7 +23,7 @@ const USERS = [
 ];
 
 // Simple JWT functions
-async function generateToken(user) {
+function generateToken(user) {
   const payload = { 
     email: user.email, 
     role: user.role, 
@@ -35,7 +32,7 @@ async function generateToken(user) {
   return btoa(JSON.stringify(payload));
 }
 
-async function verifyToken(token) {
+function verifyToken(token) {
   try {
     const payload = JSON.parse(atob(token));
     if (payload.exp < Math.floor(Date.now() / 1000)) return null;
@@ -45,240 +42,437 @@ async function verifyToken(token) {
   }
 }
 
-// Auth middleware
-async function auth(c, next) {
-  const authHeader = c.req.header('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-  const token = authHeader.substring(7);
-  const user = await verifyToken(token);
-  if (!user) return c.json({ error: 'Invalid token' }, 401);
-  c.set('user', user);
-  await next();
-}
+// CORS headers
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Content-Type': 'application/json'
+};
 
-// ==================== AUTH ENDPOINTS ====================
+// ==================== MAIN HANDLER ====================
 
-app.post('/api/login', async (c) => {
-  const { email, password } = await c.req.json();
-  const user = USERS.find(u => u.email === email && u.password === password);
-  
-  if (!user) {
-    return c.json({ error: 'Invalid credentials' }, 401);
-  }
-  
-  const token = await generateToken({ email: user.email, role: user.role });
-  return c.json({ 
-    token, 
-    user: { email: user.email, role: user.role },
-    message: 'Login successful'
-  });
-});
-
-app.get('/api/auth/check', auth, async (c) => {
-  return c.json({ user: c.get('user') });
-});
-
-// ==================== ORDERS ENDPOINTS ====================
-
-app.get('/api/orders', auth, async (c) => {
-  const db = c.env.DB;
-  try {
-    const { results } = await db.prepare(
-      'SELECT * FROM orders ORDER BY created_at DESC LIMIT 500'
-    ).all();
-    return c.json(results || []);
-  } catch (error) {
-    console.error('Database error:', error);
-    return c.json([], 200);
-  }
-});
-
-app.post('/api/orders', auth, async (c) => {
-  const db = c.env.DB;
-  const body = await c.req.json();
-  
-  try {
-    const id = `ORD-${Date.now()}`;
-    const now = new Date().toISOString();
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const method = request.method;
     
-    await db.prepare(`
-      INSERT INTO orders (
-        id, order_number, customer_name, customer_phone, delivery_address,
-        platform, total_price, status, csr, notes, products, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      id,
-      body.order_number || `ORD-${Date.now()}`,
-      body.customer_name || '',
-      body.customer_phone || '',
-      body.delivery_address || '',
-      body.platform || '',
-      parseFloat(body.total_price) || 0,
-      body.status || 'pending',
-      body.csr || '',
-      body.notes || '',
-      JSON.stringify(body.products || []),
-      now
-    ).run();
-    
-    return c.json({ success: true, id, message: 'Order created' });
-  } catch (error) {
-    console.error('Error:', error);
-    return c.json({ error: 'Failed to create order' }, 500);
-  }
-});
-
-app.patch('/api/orders/:id', auth, async (c) => {
-  const db = c.env.DB;
-  const id = c.req.param('id');
-  const { status } = await c.req.json();
-  
-  try {
-    await db.prepare(`
-      UPDATE orders SET status = ?, updated_at = ? WHERE id = ?
-    `).bind(status || 'pending', new Date().toISOString(), id).run();
-    return c.json({ success: true });
-  } catch (error) {
-    return c.json({ error: 'Failed to update' }, 500);
-  }
-});
-
-app.delete('/api/orders/:id', auth, async (c) => {
-  const db = c.env.DB;
-  const id = c.req.param('id');
-  await db.prepare('DELETE FROM orders WHERE id = ?').bind(id).run();
-  return c.json({ success: true });
-});
-
-// ==================== PRODUCTS ====================
-
-app.get('/api/products', auth, async (c) => {
-  const db = c.env.DB;
-  const query = c.req.query('query') || '';
-  
-  try {
-    let sql = 'SELECT * FROM products ORDER BY created_at DESC';
-    let params = [];
-    
-    if (query) {
-      sql = 'SELECT * FROM products WHERE title LIKE ? OR sku LIKE ? ORDER BY created_at DESC';
-      const term = `%${query}%`;
-      params = [term, term];
+    // Handle CORS preflight
+    if (method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: corsHeaders });
     }
     
-    const { results } = await db.prepare(sql).bind(...params).all();
-    return c.json({ products: results || [], total: results?.length || 0 });
-  } catch (error) {
-    return c.json({ products: [], total: 0 }, 200);
-  }
-});
-
-app.post('/api/products', auth, async (c) => {
-  const db = c.env.DB;
-  const body = await c.req.json();
-  
-  try {
-    const id = `PROD-${Date.now()}`;
-    await db.prepare(`
-      INSERT INTO products (id, title, description, price, sku, stock_quantity, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      id, body.title, body.description || '', parseFloat(body.price) || 0,
-      body.sku || '', parseInt(body.stock_quantity) || 0, new Date().toISOString()
-    ).run();
+    // ==================== AUTH ENDPOINTS ====================
     
-    return c.json({ success: true, id });
-  } catch (error) {
-    return c.json({ error: 'Failed to create product' }, 500);
-  }
-});
-
-// ==================== RTO RECORDS ====================
-
-app.get('/api/rto', auth, async (c) => {
-  const db = c.env.DB;
-  try {
-    const { results } = await db.prepare(
-      'SELECT * FROM rto_records ORDER BY created_at DESC'
-    ).all();
-    return c.json(results || []);
-  } catch (error) {
-    return c.json([], 200);
-  }
-});
-
-app.post('/api/rto', auth, async (c) => {
-  const db = c.env.DB;
-  const body = await c.req.json();
-  
-  try {
-    const id = `RTO-${Date.now()}`;
-    await db.prepare(`
-      INSERT INTO rto_records (
-        id, order_id, customer_name, phone, area, emirate, reason,
-        courier, platform, status, csr, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      id, body.order_id || '', body.customer_name || '', body.phone || '',
-      body.area || '', body.emirate || '', body.reason || '', body.courier || '',
-      body.platform || '', body.status || 'Pending', body.csr || '',
-      new Date().toISOString()
-    ).run();
+    // Login
+    if (method === 'POST' && url.pathname === '/api/login') {
+      try {
+        const body = await request.json();
+        const user = USERS.find(u => u.email === body.email && u.password === body.password);
+        
+        if (!user) {
+          return new Response(JSON.stringify({ error: 'Invalid credentials' }), {
+            status: 401,
+            headers: corsHeaders
+          });
+        }
+        
+        const token = generateToken({ email: user.email, role: user.role });
+        return new Response(JSON.stringify({ 
+          token, 
+          user: { email: user.email, role: user.role },
+          message: 'Login successful'
+        }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Invalid request' }), {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+    }
     
-    return c.json({ success: true, id });
-  } catch (error) {
-    return c.json({ error: 'Failed to create' }, 500);
-  }
-});
-
-app.patch('/api/rto/:id', auth, async (c) => {
-  const db = c.env.DB;
-  const id = c.req.param('id');
-  const { status, csr } = await c.req.json();
-  
-  try {
-    await db.prepare(`
-      UPDATE rto_records SET status = ?, csr = ?, updated_at = ? WHERE id = ?
-    `).bind(status || 'Pending', csr || '', new Date().toISOString(), id).run();
-    return c.json({ success: true });
-  } catch (error) {
-    return c.json({ error: 'Failed to update' }, 500);
-  }
-});
-
-app.delete('/api/rto/:id', auth, async (c) => {
-  const db = c.env.DB;
-  const id = c.req.param('id');
-  await db.prepare('DELETE FROM rto_records WHERE id = ?').bind(id).run();
-  return c.json({ success: true });
-});
-
-// ==================== STATISTICS ====================
-
-app.get('/api/stats', auth, async (c) => {
-  const db = c.env.DB;
-  try {
-    const total = await db.prepare('SELECT COUNT(*) as c FROM orders').first();
-    const pending = await db.prepare("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'").first();
-    const revenue = await db.prepare('SELECT SUM(total_price) as t FROM orders').first();
-    const rto = await db.prepare('SELECT COUNT(*) as c FROM rto_records').first();
+    // Auth check
+    if (method === 'GET' && url.pathname === '/api/auth/check') {
+      const authHeader = request.headers.get('Authorization');
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      const token = authHeader.substring(7);
+      const user = verifyToken(token);
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'Invalid token' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      return new Response(JSON.stringify({ user }), { headers: corsHeaders });
+    }
     
-    return c.json({
-      totalOrders: total?.c || 0,
-      pendingOrders: pending?.c || 0,
-      totalRevenue: revenue?.t || 0,
-      totalRTO: rto?.c || 0
+    // ==================== ORDERS ENDPOINTS ====================
+    
+    // Get all orders
+    if (method === 'GET' && url.pathname === '/api/orders') {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const { results } = await db.prepare(
+          'SELECT * FROM orders ORDER BY created_at DESC LIMIT 500'
+        ).all();
+        
+        return new Response(JSON.stringify(results || []), { headers: corsHeaders });
+      } catch (error) {
+        console.error('Database error:', error);
+        return new Response(JSON.stringify([]), { headers: corsHeaders });
+      }
+    }
+    
+    // Create order
+    if (method === 'POST' && url.pathname === '/api/orders') {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const body = await request.json();
+        const id = `ORD-${Date.now()}`;
+        const now = new Date().toISOString();
+        
+        await db.prepare(`
+          INSERT INTO orders (
+            id, order_number, customer_name, customer_phone, delivery_address,
+            platform, total_price, status, csr, notes, products, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          id,
+          body.order_number || `ORD-${Date.now()}`,
+          body.customer_name || '',
+          body.customer_phone || '',
+          body.delivery_address || '',
+          body.platform || '',
+          parseFloat(body.total_price) || 0,
+          body.status || 'pending',
+          body.csr || '',
+          body.notes || '',
+          JSON.stringify(body.products || []),
+          now
+        ).run();
+        
+        return new Response(JSON.stringify({ success: true, id, message: 'Order created' }), {
+          headers: corsHeaders
+        });
+      } catch (error) {
+        console.error('Error:', error);
+        return new Response(JSON.stringify({ error: 'Failed to create order' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // Update order
+    if (method === 'PATCH' && url.pathname.startsWith('/api/orders/')) {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const id = url.pathname.split('/')[3];
+        const body = await request.json();
+        
+        await db.prepare(`
+          UPDATE orders SET status = ?, updated_at = ? WHERE id = ?
+        `).bind(body.status || 'pending', new Date().toISOString(), id).run();
+        
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Failed to update' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // Delete order
+    if (method === 'DELETE' && url.pathname.startsWith('/api/orders/')) {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const id = url.pathname.split('/')[3];
+        await db.prepare('DELETE FROM orders WHERE id = ?').bind(id).run();
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Failed to delete' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // ==================== PRODUCTS ENDPOINTS ====================
+    
+    // Get products
+    if (method === 'GET' && url.pathname === '/api/products') {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const query = url.searchParams.get('query') || '';
+        
+        let sql = 'SELECT * FROM products ORDER BY created_at DESC';
+        let params = [];
+        
+        if (query) {
+          sql = 'SELECT * FROM products WHERE title LIKE ? OR sku LIKE ? ORDER BY created_at DESC';
+          const term = `%${query}%`;
+          params = [term, term];
+        }
+        
+        const { results } = await db.prepare(sql).bind(...params).all();
+        return new Response(JSON.stringify({ products: results || [], total: results?.length || 0 }), {
+          headers: corsHeaders
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({ products: [], total: 0 }), { headers: corsHeaders });
+      }
+    }
+    
+    // Create product
+    if (method === 'POST' && url.pathname === '/api/products') {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const body = await request.json();
+        const id = `PROD-${Date.now()}`;
+        
+        await db.prepare(`
+          INSERT INTO products (id, title, description, price, sku, stock_quantity, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          id, body.title, body.description || '', parseFloat(body.price) || 0,
+          body.sku || '', parseInt(body.stock_quantity) || 0, new Date().toISOString()
+        ).run();
+        
+        return new Response(JSON.stringify({ success: true, id }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Failed to create product' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // ==================== RTO ENDPOINTS ====================
+    
+    // Get RTO records
+    if (method === 'GET' && url.pathname === '/api/rto') {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const { results } = await db.prepare(
+          'SELECT * FROM rto_records ORDER BY created_at DESC'
+        ).all();
+        
+        return new Response(JSON.stringify(results || []), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify([]), { headers: corsHeaders });
+      }
+    }
+    
+    // Create RTO record
+    if (method === 'POST' && url.pathname === '/api/rto') {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const body = await request.json();
+        const id = `RTO-${Date.now()}`;
+        
+        await db.prepare(`
+          INSERT INTO rto_records (
+            id, order_id, customer_name, phone, area, emirate, reason,
+            courier, platform, status, csr, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          id, body.order_id || '', body.customer_name || '', body.phone || '',
+          body.area || '', body.emirate || '', body.reason || '', body.courier || '',
+          body.platform || '', body.status || 'Pending', body.csr || '',
+          new Date().toISOString()
+        ).run();
+        
+        return new Response(JSON.stringify({ success: true, id }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Failed to create' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // Update RTO record
+    if (method === 'PATCH' && url.pathname.startsWith('/api/rto/')) {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const id = url.pathname.split('/')[3];
+        const body = await request.json();
+        
+        await db.prepare(`
+          UPDATE rto_records SET status = ?, csr = ?, updated_at = ? WHERE id = ?
+        `).bind(body.status || 'Pending', body.csr || '', new Date().toISOString(), id).run();
+        
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Failed to update' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // Delete RTO record
+    if (method === 'DELETE' && url.pathname.startsWith('/api/rto/')) {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const id = url.pathname.split('/')[3];
+        await db.prepare('DELETE FROM rto_records WHERE id = ?').bind(id).run();
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Failed to delete' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // ==================== STATS ENDPOINTS ====================
+    
+    // Get stats
+    if (method === 'GET' && url.pathname === '/api/stats') {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const total = await db.prepare('SELECT COUNT(*) as c FROM orders').first();
+        const pending = await db.prepare("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'").first();
+        const revenue = await db.prepare('SELECT SUM(total_price) as t FROM orders').first();
+        const rto = await db.prepare('SELECT COUNT(*) as c FROM rto_records').first();
+        
+        return new Response(JSON.stringify({
+          totalOrders: total?.c || 0,
+          pendingOrders: pending?.c || 0,
+          totalRevenue: revenue?.t || 0,
+          totalRTO: rto?.c || 0
+        }), { headers: corsHeaders });
+      } catch (error) {
+        return new Response(JSON.stringify({ totalOrders: 0, pendingOrders: 0, totalRevenue: 0, totalRTO: 0 }), {
+          headers: corsHeaders
+        });
+      }
+    }
+    
+    // Health check
+    if (method === 'GET' && url.pathname === '/api/health') {
+      return new Response(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }), {
+        headers: corsHeaders
+      });
+    }
+    
+    // 404 for any other route
+    return new Response(JSON.stringify({ error: 'Not Found' }), {
+      status: 404,
+      headers: corsHeaders
     });
-  } catch (error) {
-    return c.json({ totalOrders: 0, pendingOrders: 0, totalRevenue: 0, totalRTO: 0 });
   }
-});
+};
 
-// Health check
-app.get('/api/health', (c) => {
-  return c.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-export default app;
+// Helper function to check authentication
+async function checkAuth(request) {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { valid: false };
+  }
+  
+  const token = authHeader.substring(7);
+  const user = verifyToken(token);
+  if (!user) {
+    return { valid: false };
+  }
+  
+  return { valid: true, user };
+}

@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CartoMarto Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — CARTOMARTO DASHBOARD
+   Theme: Refined Utility · Clean & Precise
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Brand */
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-light: #EFF6FF;
+  --accent-soft: #DBEAFE;
+
+  /* Status */
+  --success: #059669;
+  --success-bg: #ECFDF5;
+  --warning: #D97706;
+  --warning-bg: #FFFBEB;
+  --danger: #DC2626;
+  --danger-bg: #FEF2F2;
+  --info: #7C3AED;
+  --info-bg: #F5F3FF;
+  --cyan: #0891B2;
+  --cyan-bg: #ECFEFF;
+
+  /* Surface */
+  --bg-base: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-raised: #F8FAFC;
+  --bg-sidebar: #0F172A;
+  --bg-sidebar-hover: rgba(255,255,255,0.06);
+  --bg-sidebar-active: rgba(37,99,235,0.18);
+
+  /* Text */
+  --text-1: #0F172A;
+  --text-2: #334155;
+  --text-3: #64748B;
+  --text-4: #94A3B8;
+  --text-inverse: #F8FAFC;
+  --text-inverse-soft: #CBD5E1;
+
+  /* Border */
+  --border: #E2E8F0;
+  --border-light: #F1F5F9;
+  --border-focus: #2563EB;
+
+  /* Shadow */
+  --shadow-xs: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 8px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
+  --shadow-lg: 0 12px 24px rgba(15,23,42,0.08), 0 4px 8px rgba(15,23,42,0.04);
+  --shadow-card: 0 2px 6px rgba(15,23,42,0.05);
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --header-height: 68px;
+
+  /* Radius */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-full: 9999px;
+
+  /* Type */
+  --font-ui: 'DM Sans', -apple-system, sans-serif;
+  --font-display: 'Sora', sans-serif;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Transition */
+  --ease: all 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Reset */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-base);
+  color: var(--text-1);
+  line-height: 1.6;
+}
+
+/* Layout */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-sidebar);
+  color: var(--text-inverse);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar.collapsed { transform: translateX(-100%); }
+.sidebar-header {
+  padding: 20px 18px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-icon {
+  width: 40px; height: 40px;
+  background: var(--accent);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+}
+.logo-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-inverse);
+  display: block;
+  letter-spacing: -0.3px;
+}
+.logo-subtitle {
+  font-size: 11px;
+  color: var(--text-inverse-soft);
+  display: block;
+  margin-top: 1px;
+}
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  width: 28px; height: 28px;
+  background: var(--accent);
+  color: white;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1100;
+  border: none;
+  transition: var(--ease);
+  transform: translateY(-50%);
+  font-size: 10px;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+}
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+.nav-list { list-style: none; }
+.nav-item { margin-bottom: 2px; padding: 0 10px; }
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 14px;
+  color: var(--text-inverse-soft);
+  text-decoration: none;
+  transition: var(--ease);
+  border-radius: var(--r-md);
+  font-size: 13.5px;
+  font-weight: 500;
+  position: relative;
+}
+.nav-link:hover {
+  background: var(--bg-sidebar-hover);
+  color: white;
+}
+.nav-item.active .nav-link {
+  background: var(--bg-sidebar-active);
+  color: white;
+}
+.nav-item.active .nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+.nav-icon { font-size: 15px; width: 18px; text-align: center; }
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.floating-btn {
+  width: 40px; height: 40px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: var(--ease);
+  font-size: 14px;
+  color: white;
+}
+.logout-btn { background: rgba(220, 38, 38, 0.85); }
+.logout-btn:hover { background: #DC2626; }
+.theme-toggle { background: linear-gradient(135deg, #1E3A8A, #2563EB); }
+.notepad-toggle { background: rgba(37,99,235,0.8); }
+
+/* Main Content */
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.sidebar.collapsed + .main-content { margin-left: 0; }
+
+/* Header */
+.main-header {
+  height: var(--header-height);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.search-input-wrapper {
+  position: relative;
+  width: 320px;
+}
+.search-input {
+  width: 100%;
+  padding: 9px 14px 9px 38px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-full);
+  font-size: 13px;
+  font-family: var(--font-ui);
+  background: var(--bg-raised);
+  color: var(--text-1);
+  transition: var(--ease);
+  outline: none;
+}
+.search-input:focus {
+  border-color: var(--accent);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+.search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-4);
+  font-size: 12px;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  flex: 1;
+  padding: 24px 28px;
+  overflow-y: auto;
+}
+
+/* Stats Cards */
+.stats-section { margin-bottom: 24px; }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.stat-card {
+  background: var(--bg-surface);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--ease);
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  opacity: 0.7;
+}
+.stat-card.blue::after { background: var(--accent); }
+.stat-card.green::after { background: var(--success); }
+.stat-card.orange::after { background: var(--warning); }
+.stat-card.purple::after { background: var(--info); }
+.stat-card.info::after { background: var(--cyan); }
+.stat-icon-wrapper {
+  width: 52px; height: 52px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+  flex-shrink: 0;
+}
+.stat-card.blue .stat-icon-wrapper { background: var(--accent); }
+.stat-card.green .stat-icon-wrapper { background: var(--success); }
+.stat-card.orange .stat-icon-wrapper { background: var(--warning); }
+.stat-card.purple .stat-icon-wrapper { background: #7C3AED; }
+.stat-card.info .stat-icon-wrapper { background: var(--cyan); }
+.stat-content { flex: 1; min-width: 0; }
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.1;
+  margin-bottom: 3px;
+}
+.stat-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+/* Content Card */
+.content-card {
+  background: var(--bg-surface);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 2px;
+  letter-spacing: -0.2px;
+}
+.card-subtitle {
+  color: var(--text-3);
+  font-size: 12.5px;
+}
+.card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  text-decoration: none;
+  transition: var(--ease);
+  white-space: nowrap;
+  line-height: 1;
+}
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.btn-secondary {
+  background: white;
+  color: var(--text-2);
+  border-color: var(--border);
+}
+.btn-secondary:hover {
+  background: var(--bg-raised);
+  color: var(--text-1);
+  border-color: #CBD5E1;
+}
+
+/* Filters Section */
+.filters-section {
+  background: var(--bg-raised);
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
+.filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.filter-select, .filter-input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-family: var(--font-ui);
+  background: white;
+  color: var(--text-1);
+  transition: var(--ease);
+  outline: none;
+  height: 38px;
+}
+.filter-select:focus, .filter-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+
+/* Table */
+.table-wrapper { overflow-x: auto; }
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+.data-table thead th {
+  background: var(--bg-raised);
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1.5px solid var(--border);
+  white-space: nowrap;
+}
+.data-table tbody tr {
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.1s ease;
+}
+.data-table tbody tr:hover { background: #F8FAFC; }
+.data-table td {
+  padding: 12px 14px;
+  color: var(--text-1);
+  vertical-align: middle;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--r-full);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-badge.fulfilled, .status-badge.delivered {
+  background: var(--success-bg); color: var(--success);
+}
+.status-badge.pending, .status-badge.in-transit {
+  background: var(--accent-light); color: var(--accent);
+}
+.status-badge.partial, .status-badge.out-for-delivery {
+  background: var(--warning-bg); color: var(--warning);
+}
+.status-badge.cancelled, .status-badge.returned {
+  background: var(--danger-bg); color: var(--danger);
+}
+
+/* Table Footer */
+.table-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-raised);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pagination-btn {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  background: white;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: var(--ease);
+}
+.pagination-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+.page-number {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  background: white;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  transition: var(--ease);
+}
+.page-number.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Create Order Layout */
+.create-order-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 20px;
+  padding: 20px 24px;
+  align-items: start;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+.product-card {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--ease);
+  position: relative;
+}
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent);
+}
+.product-image {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-raised);
+  overflow: hidden;
+}
+.product-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.product-info { padding: 12px; }
+.product-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 3px;
+  line-height: 1.35;
+}
+.product-meta { font-size: 11px; color: var(--text-3); margin-bottom: 5px; }
+.product-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Order Panel */
+.order-panel {
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  padding: 18px;
+  border: 1.5px solid var(--border);
+  gap: 16px;
+}
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.order-item {
+  background: white;
+  border-radius: var(--r-md);
+  padding: 11px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+}
+.order-item-details { flex: 1; min-width: 0; }
+.order-item-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-1);
+  line-height: 1.3;
+}
+.order-qty {
+  width: 56px;
+  padding: 6px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  font-size: 12.5px;
+  text-align: center;
+}
+.order-summary {
+  background: white;
+  border-radius: var(--r-lg);
+  padding: 16px;
+  border: 1.5px solid var(--border);
+  margin-top: 16px;
+}
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-light);
+}
+.summary-row.total-row {
+  border-top: 1.5px solid var(--border);
+  padding-top: 10px;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.summary-label { color: var(--text-3); font-weight: 500; }
+.summary-value { color: var(--text-1); font-weight: 600; }
+
+/* Customer Section */
+.customer-section {
+  background: white;
+  border-radius: var(--r-lg);
+  padding: 18px;
+  border: 1.5px solid var(--border);
+  margin-top: 16px;
+}
+.form-row { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+.form-row.two-columns { grid-template-columns: 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+.form-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.form-input, .form-select, .form-textarea {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-family: var(--font-ui);
+  background: white;
+  color: var(--text-1);
+  transition: var(--ease);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.form-input, .form-select { height: 40px; }
+.form-textarea { min-height: 90px; resize: vertical; }
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+.phone-input-wrapper { display: flex; gap: 8px; align-items: center; }
+.country-code { width: 150px; flex-shrink: 0; }
+.phone-number { flex: 1; }
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  background: rgba(15,23,42,0.45);
+  backdrop-filter: blur(3px);
+}
+.modal-content {
+  background: white;
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 580px;
+  max-height: 85vh;
+  overflow-y: auto;
+  margin: 6vh auto;
+  border: 1px solid var(--border);
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: white;
+}
+.close {
+  width: 30px; height: 30px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-3);
+}
+.close:hover { background: var(--danger); color: white; border-color: var(--danger); }
+.modal-body { padding: 20px 24px; }
+.order-detail {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 13px;
+}
+.order-detail strong { display: inline-block; width: 140px; font-weight: 600; }
+
+/* Dark Theme */
+body.dark-theme {
+  --bg-base: #0A0F1A;
+  --bg-surface: #111827;
+  --bg-raised: #1A2435;
+  --text-1: #F1F5F9;
+  --text-2: #CBD5E1;
+  --text-3: #94A3B8;
+  --border: #1E2D45;
+}
+
+/* Mobile */
+.mobile-menu-btn {
+  display: none;
+  width: 38px; height: 38px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  background: white;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.active { transform: translateX(0); }
+  .main-content { margin-left: 0 !important; }
+  .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+  .create-order-layout { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .filter-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .filter-row { grid-template-columns: 1fr; }
+}
+
+.loading-cell { text-align: center; padding: 48px 24px; color: var(--text-3); }
+.spinner {
+  width: 24px; height: 24px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div class="logo-text">
+            <span class="logo-title">CartoMarto</span>
+            <span class="logo-subtitle">Dashboard</span>
+          </div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <li class="nav-item active">
+            <a href="#" id="nav-dashboard" class="nav-link">
+              <i class="fas fa-tachometer-alt nav-icon"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" id="nav-create-order" class="nav-link">
+              <i class="fas fa-plus-circle nav-icon"></i>
+              <span class="nav-text">Create Order</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" id="nav-rto" class="nav-link">
+              <i class="fas fa-undo-alt nav-icon"></i>
+              <span class="nav-text">RTO</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="floating-btn logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="floating-btn theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="floating-btn notepad-toggle" id="notepad-toggle"><i class="fas fa-sticky-note"></i></button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="main-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">Order Management</h1>
+        </div>
+        <div class="header-right">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search orders..." id="search-input">
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <!-- Stats Section -->
+        <div class="stats-section">
+          <div class="stats-grid">
+            <div class="stat-card blue" data-stat-type="total-orders">
+              <div class="stat-icon-wrapper"><i class="fas fa-shopping-cart"></i></div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label">Total Orders</div>
+              </div>
+            </div>
+            <div class="stat-card green" data-stat-type="fulfilled">
+              <div class="stat-icon-wrapper"><i class="fas fa-check-circle"></i></div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-fulfilled">0</div>
+                <div class="stat-label">Fulfilled</div>
+              </div>
+            </div>
+            <div class="stat-card orange" data-stat-type="pending">
+              <div class="stat-icon-wrapper"><i class="fas fa-clock"></i></div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-pending">0</div>
+                <div class="stat-label">Pending</div>
+              </div>
+            </div>
+            <div class="stat-card purple" data-stat-type="revenue">
+              <div class="stat-icon-wrapper"><i class="fas fa-dollar-sign"></i></div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-revenue">د.إ0</div>
+                <div class="stat-label">Revenue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Card -->
+        <div class="content-card" id="orders-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Recent Orders</h2>
+              <p class="card-subtitle">Manage and track all your orders</p>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-secondary" id="reset-btn"><i class="fas fa-undo"></i> Reset</button>
+              <button class="btn btn-secondary" id="export-btn"><i class="fas fa-download"></i> Export</button>
+              <button class="btn btn-primary" id="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+          </div>
+
+          <div class="filters-section">
+            <div class="filter-row">
+              <div class="filter-group">
+                <label class="filter-label">Order Status</label>
+                <select id="status-filter" class="filter-select">
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="fulfilled">Fulfilled</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">Platform</label>
+                <select id="platform-filter" class="filter-select">
+                  <option value="all">All</option>
+                  <option value="CCWA">CCWA</option>
+                  <option value="CCFB">CCFB</option>
+                  <option value="CGWA">CGWA</option>
+                  <option value="CGFB">CGFB</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">From Date</label>
+                <input type="date" id="from-date" class="filter-input">
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">To Date</label>
+                <input type="date" id="to-date" class="filter-input">
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Platform</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>CSR</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body">
+                <tr><td colspan="8" class="loading-cell"><div class="spinner"></div> Loading orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <div class="pagination-controls">
+              <button class="pagination-btn" id="prev-page"><i class="fas fa-chevron-left"></i></button>
+              <div id="pagination-numbers"></div>
+              <button class="pagination-btn" id="next-page"><i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Order Page -->
+        <div class="content-card" id="create-order-page" style="display: none;">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Create New Order</h2>
+              <p class="card-subtitle">Add products and customer details</p>
+            </div>
+            <button class="btn btn-secondary" id="back-to-orders"><i class="fas fa-arrow-left"></i> Back</button>
+          </div>
+          <div class="create-order-layout">
+            <div class="products-panel">
+              <div class="panel-header">
+                <h3 class="section-title">Products</h3>
+                <div class="search-input-wrapper">
+                  <i class="fas fa-search search-icon"></i>
+                  <input type="text" id="product-search" class="search-input" placeholder="Search products...">
+                </div>
+              </div>
+              <div class="product-grid" id="product-grid"></div>
+            </div>
+
+            <div class="order-panel">
+              <h3 class="section-title">Cart Items</h3>
+              <div class="cart-items" id="order-items"></div>
+              
+              <div class="order-summary">
+                <div class="summary-row">
+                  <span class="summary-label">Subtotal</span>
+                  <span class="summary-value" id="subtotal">د.إ0.00</span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Shipping</span>
+                  <span class="summary-value" id="shipping">د.إ15.00</span>
+                </div>
+                <div class="summary-row total-row">
+                  <span class="summary-label">Total</span>
+                  <span class="summary-value" id="grand-total">د.إ0.00</span>
+                </div>
+                <button class="btn btn-primary btn-block" id="create-order-btn" style="margin-top: 12px;">Create Order</button>
+                <button class="btn btn-secondary btn-block" id="clear-order-btn" style="margin-top: 8px;">Clear Cart</button>
+                <div id="order-result" style="margin-top: 10px; font-size: 12px;"></div>
+              </div>
+
+              <div class="customer-section">
+                <h3 class="section-title">Customer Details</h3>
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" id="customer_name" class="form-input" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Phone Number</label>
+                  <div class="phone-input-wrapper">
+                    <select id="country_code" class="form-select country-code">
+                      <option value="+971">UAE +971</option>
+                      <option value="+94">Sri Lanka +94</option>
+                      <option value="+92">Pakistan +92</option>
+                      <option value="+91">India +91</option>
+                    </select>
+                    <input type="tel" id="customer_phone" class="form-input phone-number" placeholder="52XXXXXXX">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Delivery Address</label>
+                  <textarea id="delivery_address" class="form-textarea" placeholder="Enter complete address"></textarea>
+                </div>
+                <div class="form-row two-columns">
+                  <div class="form-group">
+                    <label class="form-label">Platform</label>
+                    <select id="platform" class="form-select">
+                      <option value="">Select Platform</option>
+                      <option>CCWA</option>
+                      <option>CCFB</option>
+                      <option>CGWA</option>
+                      <option>CGFB</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">CSR Name</label>
+                    <input type="text" id="csr_name" class="form-input" placeholder="Enter CSR name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Notes</label>
+                  <textarea id="notes" class="form-textarea" placeholder="Additional notes..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RTO Page -->
+        <div class="content-card" id="rto-page" style="display: none;">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">RTO Management</h2>
+              <p class="card-subtitle">Return to origin records</p>
+            </div>
+            <button class="btn btn-primary" id="add-rto-btn"><i class="fas fa-plus"></i> Add RTO Record</button>
+          </div>
+          <div class="filters-section">
+            <div class="filter-row">
+              <div class="filter-group">
+                <label class="filter-label">Search</label>
+                <input type="text" id="rto-search" class="filter-input" placeholder="Order ID, customer...">
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select id="rto-status-filter" class="filter-select">
+                  <option value="all">All</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Followed Up">Followed Up</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Area</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                  <th>CSR</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="rto-body">
+                <tr><td colspan="8" class="loading-cell">No RTO records</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div id="order-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Order Details</h2>
+        <button class="close">&times;</button>
+      </div>
+      <div class="modal-body" id="order-details"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

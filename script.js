@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = 'https://cartomarto-api.workers.dev'; // Replace with your worker URL after deployment
+const API_URL = 'https://cartomarto-api.borntow2.workers.dev/'; // Replace with your worker URL after deployment
 
 let allOrders = [];
 let filteredOrders = [];

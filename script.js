@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = 'https://cartomarto-api.borntow2.workers.dev/'; // Replace with your worker URL after deployment
+const API_URL = 'https://cartomarto-api.borntow2.workers.dev'; // FIX: removed trailing slash
 
 let allOrders = [];
 let filteredOrders = [];
@@ -8,25 +8,28 @@ let ordersPerPage = 10;
 let token = localStorage.getItem('token');
 
 // Check authentication
-async function checkAuth() {
+// FIX: removed call to /api/auth/check (route doesn't exist in worker).
+// Instead we validate the token locally — it's a base64-encoded JSON with an exp field.
+function checkAuth() {
   if (!token) {
     window.location.href = '/login.html';
     return false;
   }
-  
+
   try {
-    const response = await fetch(`${API_URL}/api/auth/check`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    if (!response.ok) {
+    const payload = JSON.parse(atob(token));
+    if (!payload.email || !payload.exp || Date.now() > payload.exp) {
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       window.location.href = '/login.html';
       return false;
     }
     return true;
-  } catch (error) {
-    console.error('Auth check failed:', error);
+  } catch (e) {
+    // Token is malformed
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login.html';
     return false;
   }
 }
@@ -115,7 +118,6 @@ function renderOrders() {
     </tr>
   `).join('');
   
-  // Add click handlers for view details
   document.querySelectorAll('.view-details').forEach(btn => {
     btn.addEventListener('click', () => showOrderDetails(btn.dataset.id));
   });
@@ -181,7 +183,7 @@ async function createOrder(orderData) {
       const result = await response.json();
       document.getElementById('order-result').innerHTML = '<span style="color: green;">✓ Order created successfully!</span>';
       setTimeout(() => document.getElementById('order-result').innerHTML = '', 3000);
-      loadOrders(); // Refresh orders list
+      loadOrders();
       clearOrderForm();
     } else {
       const error = await response.json();
@@ -245,7 +247,6 @@ function renderProducts(products) {
     </div>
   `).join('');
   
-  // Add click handlers
   document.querySelectorAll('.product-card').forEach(card => {
     card.addEventListener('click', () => addToCart(card));
   });
@@ -292,7 +293,6 @@ function updateCartDisplay() {
       `;
     }).join('');
     
-    // Add event listeners
     document.querySelectorAll('.order-qty').forEach(input => {
       input.addEventListener('change', (e) => {
         const idx = parseInt(e.target.dataset.index);
@@ -353,12 +353,13 @@ function logout() {
 }
 
 // Initialize
-document.addEventListener('DOMContentLoaded', async () => {
-  const authenticated = await checkAuth();
+document.addEventListener('DOMContentLoaded', () => {
+  // FIX: checkAuth is now synchronous, no need for await
+  const authenticated = checkAuth();
   if (!authenticated) return;
   
   // Load data
-  await loadOrders();
+  loadOrders();
   
   // Setup event listeners
   document.getElementById('search-input')?.addEventListener('input', applyFilters);
@@ -375,7 +376,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyFilters();
   });
   document.getElementById('export-btn')?.addEventListener('click', () => {
-    // Simple CSV export
     const headers = ['Order ID', 'Customer', 'Platform', 'Total', 'Status', 'CSR', 'Date'];
     const rows = filteredOrders.map(o => [
       o.order_number || o.id,

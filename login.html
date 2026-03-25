@@ -138,7 +138,8 @@
   </div>
 
   <script>
-    const API_URL = 'https://cartomarto-api.borntow2.workers.dev/'; // Replace with your worker URL after deployment
+    // FIX: Removed trailing slash from API_URL to prevent double-slash in fetch URL
+    const API_URL = 'https://cartomarto-api.borntow2.workers.dev';
     
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();

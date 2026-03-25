@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CartoMarto Login</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      padding: 40px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+    }
+    .logo-icon i {
+      font-size: 28px;
+      color: white;
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+      outline: none;
+    }
+    input:focus {
+      border-color: #667eea;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .error-message {
+      background: #fee;
+      color: #c33;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <div class="logo-icon">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <h1>CartoMarto</h1>
+      <p class="subtitle">Dashboard Access</p>
+    </div>
+    
+    <div class="error-message" id="error-message">
+      <i class="fas fa-exclamation-circle"></i> Invalid credentials
+    </div>
+    
+    <form id="login-form">
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="your@email.com" required autocomplete="off">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" id="login-btn">Sign In</button>
+    </form>
+  </div>
+
+  <script>
+    const API_URL = 'https://cartomarto-api.workers.dev'; // Replace with your worker URL after deployment
+    
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('error-message');
+      const loginBtn = document.getElementById('login-btn');
+      
+      if (!email || !password) {
+        errorDiv.textContent = 'Please enter email and password';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Logging in...';
+      errorDiv.style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_URL}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          window.location.href = '/';
+        } else {
+          errorDiv.textContent = data.error || 'Login failed';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'Network error. Please try again.';
+        errorDiv.style.display = 'block';
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

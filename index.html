@@ -51,11 +51,12 @@
   .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; color:var(--text); background:#fff; outline:none; transition:border-color .2s; }
   .form-control:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(59,130,246,.1); }
   .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); backdrop-filter:blur(3px); z-index:200; display:flex; align-items:center; justify-content:center; }
-  .modal { background:#fff; border-radius:16px; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,.2); }
-  .modal-header { padding:22px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .modal { background:#fff; border-radius:16px; width:100%; max-width:680px; max-height:92vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,.2); }
+  .modal-header { padding:22px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:#fff; z-index:10; }
   .modal-body { padding:24px; }
-  .modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:12px; justify-content:flex-end; }
+  .modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:12px; justify-content:flex-end; position:sticky; bottom:0; background:#fff; }
   .tabs { display:flex; gap:4px; background:#f1f5f9; padding:4px; border-radius:10px; }
   .tab { padding:7px 16px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; color:var(--muted); border:none; background:transparent; }
   .tab.active { background:#fff; color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,.08); }
@@ -68,16 +69,91 @@
   .product-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-top:16px; }
   .product-card { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:all .2s; }
   .product-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.1); border-color:var(--primary); }
-  .product-image { height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; }
+  .product-image { height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .product-image img { width:100%; height:100%; object-fit:cover; }
   .product-info { padding:12px; }
   .product-title { font-weight:600; font-size:14px; margin-bottom:4px; }
   .product-price { color:var(--primary); font-weight:700; font-size:14px; }
-  .cart-items { max-height:400px; overflow-y:auto; }
+  .cart-items { max-height:300px; overflow-y:auto; }
   .cart-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border); }
   .empty-cart { text-align:center; padding:40px; color:var(--muted); }
   .order-summary { background:#f8fafc; border-radius:12px; padding:16px; margin-top:16px; }
   .summary-row { display:flex; justify-content:space-between; padding:8px 0; }
   .summary-row.total { border-top:2px solid var(--border); margin-top:8px; padding-top:12px; font-weight:700; font-size:16px; }
+
+  /* ── Image Upload Zone ── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: #fafafa;
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--primary);
+    background: #eff6ff;
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-zone-icon { color: #94a3b8; margin-bottom: 10px; }
+  .upload-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .upload-thumb {
+    width: 80px; height: 80px; border-radius: 8px; object-fit: cover;
+    border: 2px solid var(--border); position: relative;
+  }
+  .upload-thumb-wrap { position: relative; display: inline-block; }
+  .upload-thumb-remove {
+    position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
+    background: #ef4444; color: #fff; border-radius: 50%; border: none;
+    font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; line-height: 1;
+  }
+
+  /* ── Variants ── */
+  .variant-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 36px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+  .variant-row input { padding: 7px 10px; font-size: 13px; }
+  .section-divider {
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .6px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    margin-bottom: 16px; margin-top: 4px;
+  }
+  .warehouse-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 100px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+  .stock-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;
+  }
+  .stock-ok { background: #dcfce7; color: #15803d; }
+  .stock-low { background: #fef9c3; color: #854d0e; }
+  .stock-out { background: #fee2e2; color: #991b1b; }
+
+  /* Product table image thumbnail */
+  .prod-thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); }
+  .prod-thumb-placeholder { width: 40px; height: 40px; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -155,12 +231,8 @@
         </div>
         <div style="overflow-x:auto">
           <table>
-            <thead>
-              <tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Platform</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="ordersBody">
-              <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Loading orders...</td></tr>
-            </tbody>
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Platform</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="ordersBody"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Loading orders...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -182,9 +254,8 @@
             <div id="noProductsMsg" class="empty-cart" style="display:none">No products found</div>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
             <h3 style="font-size:16px;font-weight:700">Order Builder</h3>
           </div>
           <div style="padding:20px">
@@ -245,18 +316,18 @@
 
     <!-- ══ PRODUCTS ══ -->
     <div class="page-section" id="section-products">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div>
+          <div style="font-size:20px;font-weight:700">Product Catalogue</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">Manage inventory, variants & warehouse stock</div>
+        </div>
         <button onclick="openProductModal()" class="btn btn-primary">+ Add Product</button>
       </div>
       <div class="card">
         <div style="overflow-x:auto">
           <table>
-            <thead>
-              <tr><th>Title</th><th>SKU</th><th>Price (AED)</th><th>Stock</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="productsBody">
-              <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Loading products...</td></tr>
-            </tbody>
+            <thead><tr><th>Image</th><th>Title</th><th>SKU</th><th>Price (AED)</th><th>Variants</th><th>Total Stock</th><th>Actions</th></tr></thead>
+            <tbody id="productsBody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Loading products...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -278,7 +349,7 @@
   </div>
 </div>
 
-<!-- Order Detail Modal -->
+<!-- ══ ORDER DETAIL MODAL ══ -->
 <div id="orderModal" class="modal-overlay" style="display:none">
   <div class="modal">
     <div class="modal-header">
@@ -293,35 +364,109 @@
   </div>
 </div>
 
-<!-- Product Modal -->
+<!-- ══ PRODUCT MODAL (NEW) ══ -->
 <div id="productModal" class="modal-overlay" style="display:none">
-  <div class="modal" style="max-width:480px">
+  <div class="modal" style="max-width:680px">
     <div class="modal-header">
-      <h3 style="font-size:16px;font-weight:700" id="productModalTitle">Add Product</h3>
+      <div>
+        <h3 style="font-size:16px;font-weight:700" id="productModalTitle">Add Product</h3>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Fill in details, upload images and set variants</div>
+      </div>
       <button onclick="closeModal('productModal')" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted)">✕</button>
     </div>
-    <form onsubmit="saveProduct(event)">
-      <div class="modal-body">
-        <input type="hidden" id="pId" />
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Title *</label><input type="text" id="pTitle" class="form-control" placeholder="Product name" required /></div>
-          <div class="form-group"><label class="form-label">SKU *</label><input type="text" id="pSku" class="form-control" placeholder="SKU-001" required /></div>
+    <div class="modal-body">
+      <input type="hidden" id="pId" />
+
+      <!-- Basic Info -->
+      <div class="section-divider">Basic Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Product Title *</label>
+          <input type="text" id="pTitle" class="form-control" placeholder="e.g. Premium Face Cream" required />
         </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Price (AED) *</label><input type="number" id="pPrice" class="form-control" placeholder="0.00" min="0" step="0.01" required /></div>
-          <div class="form-group"><label class="form-label">Stock *</label><input type="number" id="pStock" class="form-control" placeholder="0" min="0" required /></div>
+        <div class="form-group">
+          <label class="form-label">SKU *</label>
+          <input type="text" id="pSku" class="form-control" placeholder="e.g. FC-001" />
         </div>
-        <div class="form-group"><label class="form-label">Description</label><textarea id="pDesc" class="form-control" rows="2" placeholder="Brief product description"></textarea></div>
       </div>
-      <div class="modal-footer">
-        <button type="button" onclick="closeModal('productModal')" class="btn btn-outline">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Base Price (AED) *</label>
+          <input type="number" id="pPrice" class="form-control" placeholder="0.00" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <input type="text" id="pCategory" class="form-control" placeholder="e.g. Skincare, Clothing..." />
+        </div>
       </div>
-    </form>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="pDesc" class="form-control" rows="2" placeholder="Brief product description"></textarea>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="section-divider" style="margin-top:8px">Product Images</div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="pImages" accept="image/*" multiple onchange="handleImageSelect(event)" />
+        <div class="upload-zone-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:#475569;margin-bottom:4px">Drop images here or click to upload</div>
+        <div style="font-size:12px;color:var(--muted)">JPG, PNG, WebP — up to 5 images, max 2MB each</div>
+      </div>
+      <div class="upload-preview" id="imagePreview"></div>
+
+      <!-- Variants -->
+      <div class="section-divider" style="margin-top:20px">
+        Variants
+        <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;margin-left:8px;color:var(--muted)">(e.g. Size, Color — leave empty if product has no variants)</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 36px;gap:8px;margin-bottom:8px;padding:0 10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Name</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Value</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Price (AED)</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">SKU</div>
+        <div></div>
+      </div>
+      <div id="variantRows"></div>
+      <button type="button" onclick="addVariantRow()" class="btn btn-outline btn-sm" style="margin-top:4px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+        Add Variant
+      </button>
+
+      <!-- Warehouse Stock -->
+      <div class="section-divider" style="margin-top:24px">
+        Warehouse / Location Stock
+        <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;margin-left:8px;color:var(--muted)">(track qty per location)</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 100px;gap:8px;margin-bottom:8px;padding:0 10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Warehouse / Location</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Notes</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Quantity</div>
+      </div>
+      <div id="warehouseRows"></div>
+      <button type="button" onclick="addWarehouseRow()" class="btn btn-outline btn-sm" style="margin-top:4px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+        Add Location
+      </button>
+
+      <!-- Total stock summary -->
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin-top:20px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:13px;color:#15803d;font-weight:600">Total Stock (all locations)</div>
+        <div style="font-size:20px;font-weight:800;color:#15803d" id="totalStockDisplay">0</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('productModal')" class="btn btn-outline">Cancel</button>
+      <button type="button" onclick="saveProduct()" class="btn btn-primary" id="saveProductBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Product
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- RTO Modal -->
+<!-- ══ RTO MODAL ══ -->
 <div id="rtoModal" class="modal-overlay" style="display:none">
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
@@ -340,7 +485,10 @@
           <option value="REPROCESS">REPROCESS</option>
         </select>
       </div>
-      <div class="form-group"><label class="form-label">Notes</label><textarea id="rtoNotes" class="form-control" rows="3" placeholder="Update notes..."></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="rtoNotes" class="form-control" rows="3" placeholder="Update notes..."></textarea>
+      </div>
     </div>
     <div class="modal-footer">
       <button onclick="closeModal('rtoModal')" class="btn btn-outline">Cancel</button>
@@ -360,6 +508,7 @@ let currentUser = null, token = null;
 let allOrders = [], allProducts = [], allRto = [];
 let filterStatus = '', editingOrderId = null;
 let cart = [];
+let productImages = []; // base64 images for current modal session
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -375,18 +524,13 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('userRoleBadge').textContent = (currentUser.role || 'User').toUpperCase();
     document.getElementById('topbarEmail').textContent = currentUser.email;
   } catch (e) {
-    console.error('Error parsing user:', e);
-    localStorage.clear();
-    window.location.href = 'login.html';
-    return;
+    localStorage.clear(); window.location.href = 'login.html'; return;
   }
-  fetchStats();
-  fetchOrders();
-  fetchProducts();
-  loadProducts();
+  fetchStats(); fetchOrders(); fetchProducts(); loadProducts();
+  setupDragDrop();
 });
 
-// ── API ───────────────────────────────────────────────────────────────────
+// ── API ────────────────────────────────────────────────────────────────────
 async function api(path, opts = {}) {
   try {
     const res = await fetch(`${API_URL}${path}`, {
@@ -400,8 +544,7 @@ async function api(path, opts = {}) {
 
 function toast(msg, type = 'success') {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = `show ${type}`;
+  el.textContent = msg; el.className = `show ${type}`;
   setTimeout(() => el.className = '', 3000);
 }
 
@@ -419,7 +562,7 @@ function showSection(name, btn) {
 function logout() { localStorage.clear(); window.location.href = 'login.html'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-// ── STATS ─────────────────────────────────────────────────────────────────
+// ── STATS ──────────────────────────────────────────────────────────────────
 async function fetchStats() {
   const data = await api('/api/stats');
   if (!data) return;
@@ -452,12 +595,8 @@ function renderOrders() {
     (o.customer_name || '').toLowerCase().includes(search) ||
     (o.customer_phone || '').includes(search)
   );
-  const statusClasses = {
-    pending: 'badge-Pending', fulfilled: 'badge-Delivered',
-    delivered: 'badge-Delivered', cancelled: 'badge-Cancelled', rto: 'badge-RTO'
-  };
-  const tbody = document.getElementById('ordersBody');
-  tbody.innerHTML = rows.length ? rows.map(o => `
+  const statusClasses = { pending:'badge-Pending', fulfilled:'badge-Delivered', delivered:'badge-Delivered', cancelled:'badge-Cancelled', rto:'badge-RTO' };
+  document.getElementById('ordersBody').innerHTML = rows.length ? rows.map(o => `
     <tr>
       <td style="font-weight:600;color:#1d4ed8">${o.order_number || o.id?.slice(-8)}</td>
       <td>${o.customer_name || 'Guest'}</td>
@@ -484,8 +623,7 @@ function openOrderDetail(id) {
     <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9">
       <span>${p.title || p.name || 'Product'} × ${p.qty || p.quantity || 1}</span>
       <span style="font-weight:600">AED ${Number(p.price || 0).toLocaleString()}</span>
-    </div>
-  `).join('');
+    </div>`).join('');
   document.getElementById('orderModalBody').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
       <div><div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px">ORDER ID</div><div style="font-weight:700;color:#1d4ed8">${o.order_number || o.id}</div></div>
@@ -512,27 +650,15 @@ async function saveOrderUpdate() {
   if (data?.success) {
     const idx = allOrders.findIndex(o => o.id === editingOrderId);
     if (idx >= 0) allOrders[idx].status = status;
-    renderOrders();
-    fetchStats();
-    closeModal('orderModal');
-    toast('Order updated');
-  } else {
-    toast('Update failed', 'error');
-  }
+    renderOrders(); fetchStats(); closeModal('orderModal'); toast('Order updated');
+  } else toast('Update failed', 'error');
 }
 
-// ── DELETE ORDER ──────────────────────────────────────────────────────────
 async function deleteOrder(id) {
   if (!confirm('Delete this order? This cannot be undone.')) return;
   const data = await api(`/api/orders/${id}`, { method: 'DELETE' });
-  if (data?.success) {
-    allOrders = allOrders.filter(o => o.id !== id);
-    renderOrders();
-    fetchStats();
-    toast('Order deleted');
-  } else {
-    toast('Delete failed', 'error');
-  }
+  if (data?.success) { allOrders = allOrders.filter(o => o.id !== id); renderOrders(); fetchStats(); toast('Order deleted'); }
+  else toast('Delete failed', 'error');
 }
 
 // ── PRODUCTS & CART ─────────────────────────────────────────────────────────
@@ -541,40 +667,47 @@ async function loadProducts(search = '') {
   if (data?.products) { allProducts = data.products; renderProductGrid(); }
 }
 
+function getTotalStock(p) {
+  // Sum warehouse qtys if available, else fall back to stock_quantity
+  try {
+    const wh = typeof p.warehouses === 'string' ? JSON.parse(p.warehouses || '[]') : (p.warehouses || []);
+    if (wh.length > 0) return wh.reduce((s, w) => s + (parseInt(w.qty) || 0), 0);
+  } catch {}
+  return p.stock_quantity || 0;
+}
+
 function renderProductGrid() {
   const grid = document.getElementById('productGrid');
-  const noProductsMsg = document.getElementById('noProductsMsg');
+  const noMsg = document.getElementById('noProductsMsg');
   if (!grid) return;
-  if (!allProducts.length) {
-    grid.innerHTML = '';
-    if (noProductsMsg) noProductsMsg.style.display = 'block';
-    return;
-  }
-  if (noProductsMsg) noProductsMsg.style.display = 'none';
-  grid.innerHTML = allProducts.map(p => `
-    <div class="product-card" onclick="addToCart('${p.id}', '${p.title}', ${p.price})">
-      <div class="product-image">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      </div>
-      <div class="product-info">
-        <div class="product-title">${p.title}</div>
-        <div class="product-price">AED ${Number(p.price).toFixed(2)}</div>
-        <div style="font-size:12px;color:${(p.stock_quantity||0)<5?'#ef4444':'var(--muted)'};margin-top:4px">
-          Stock: ${p.stock_quantity || 0}${(p.stock_quantity||0)<5?' ⚠️':''}
+  if (!allProducts.length) { grid.innerHTML = ''; if (noMsg) noMsg.style.display = 'block'; return; }
+  if (noMsg) noMsg.style.display = 'none';
+  grid.innerHTML = allProducts.map(p => {
+    const stock = getTotalStock(p);
+    let imgs = [];
+    try { imgs = typeof p.images === 'string' ? JSON.parse(p.images || '[]') : (p.images || []); } catch {}
+    const imgHtml = imgs[0]
+      ? `<img src="${imgs[0]}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover">`
+      : `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
+    return `
+      <div class="product-card" onclick="addToCart('${p.id}', '${p.title.replace(/'/g,"\\'")}', ${p.price})">
+        <div class="product-image">${imgHtml}</div>
+        <div class="product-info">
+          <div class="product-title">${p.title}</div>
+          <div class="product-price">AED ${Number(p.price).toFixed(2)}</div>
+          <div style="font-size:12px;color:${stock<5?'#ef4444':stock<10?'#d97706':'var(--muted)'};margin-top:4px">
+            Stock: ${stock}${stock===0?' — Out of stock':stock<5?' ⚠️ Low':''}
+          </div>
         </div>
-      </div>
-    </div>
-  `).join('');
+      </div>`;
+  }).join('');
 }
 
 function addToCart(id, title, price) {
-  // Check available stock
   const product = allProducts.find(p => p.id === id);
+  const stock = getTotalStock(product || {});
   const currentQty = cart.find(item => item.id === id)?.qty || 0;
-  if (product && currentQty >= (product.stock_quantity || 0)) {
-    toast(`Only ${product.stock_quantity} in stock`, 'error');
-    return;
-  }
+  if (stock > 0 && currentQty >= stock) { toast(`Only ${stock} in stock`, 'error'); return; }
   const existing = cart.find(item => item.id === id);
   if (existing) existing.qty++;
   else cart.push({ id, title, price, qty: 1 });
@@ -585,10 +718,8 @@ function updateCartDisplay() {
   const cartDiv = document.getElementById('cartItems');
   const emptyMsg = document.getElementById('emptyCartMsg');
   let subtotal = 0;
-  if (!cart.length) {
-    cartDiv.innerHTML = '';
-    if (emptyMsg) emptyMsg.style.display = 'block';
-  } else {
+  if (!cart.length) { cartDiv.innerHTML = ''; if (emptyMsg) emptyMsg.style.display = 'block'; }
+  else {
     if (emptyMsg) emptyMsg.style.display = 'none';
     cartDiv.innerHTML = cart.map((item, i) => `
       <div class="cart-item">
@@ -597,13 +728,11 @@ function updateCartDisplay() {
           <input type="number" value="${item.qty}" min="1" max="99" style="width:60px;padding:4px;border:1px solid var(--border);border-radius:6px" onchange="updateQty(${i}, this.value)">
           <button class="btn btn-danger btn-sm" onclick="removeFromCart(${i})">✕</button>
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
     subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
   }
-  const shipping = 15;
   document.getElementById('subtotal').textContent = `AED ${subtotal.toFixed(2)}`;
-  document.getElementById('totalAmount').textContent = `AED ${(subtotal + shipping).toFixed(2)}`;
+  document.getElementById('totalAmount').textContent = `AED ${(subtotal + 15).toFixed(2)}`;
 }
 
 function updateQty(index, qty) { cart[index].qty = Math.max(1, parseInt(qty) || 1); updateCartDisplay(); }
@@ -615,70 +744,83 @@ async function submitOrder() {
   const phone = document.getElementById('customerPhone').value.trim();
   const address = document.getElementById('deliveryAddress').value.trim();
   const platform = document.getElementById('orderPlatform').value;
-
   if (!name || !phone || !address || !platform) {
-    document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Please fill all required fields</span>';
-    return;
+    document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Please fill all required fields</span>'; return;
   }
-  if (!cart.length) {
-    document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Cart is empty</span>';
-    return;
-  }
+  if (!cart.length) { document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Cart is empty</span>'; return; }
 
   const orderData = {
     order_number: `ORD-${Date.now()}`,
     customer_name: name,
     customer_phone: document.getElementById('countryCode').value + phone,
     delivery_address: address,
-    platform: platform,
-    total_price: cart.reduce((sum, item) => sum + (item.price * item.qty), 0) + 15,
-    status: 'pending',
-    csr: currentUser.email,
+    platform, status: 'pending', csr: currentUser.email,
     notes: document.getElementById('orderNotes').value,
+    total_price: cart.reduce((sum, item) => sum + (item.price * item.qty), 0) + 15,
     products: cart.map(item => ({ id: item.id, title: item.title, price: item.price, quantity: item.qty }))
   };
 
   const data = await api('/api/orders', { method: 'POST', body: JSON.stringify(orderData) });
-
   if (data?.success) {
-    // ── Deduct inventory for each cart item ──
     for (const item of cart) {
       const product = allProducts.find(p => p.id === item.id);
       if (product) {
-        const newStock = Math.max(0, (product.stock_quantity || 0) - item.qty);
-        await api(`/api/products/${item.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify({
-            title: product.title,
-            description: product.description || '',
-            price: product.price,
-            sku: product.sku || '',
-            stock_quantity: newStock,
-          })
-        });
-        product.stock_quantity = newStock; // update local state immediately
+        // Deduct from warehouses proportionally (from first warehouse with stock)
+        let warehouses = [];
+        try { warehouses = typeof product.warehouses === 'string' ? JSON.parse(product.warehouses || '[]') : (product.warehouses || []); } catch {}
+        let remaining = item.qty;
+        if (warehouses.length > 0) {
+          for (let w of warehouses) {
+            if (remaining <= 0) break;
+            const available = Math.min(parseInt(w.qty) || 0, remaining);
+            w.qty = (parseInt(w.qty) || 0) - available;
+            remaining -= available;
+          }
+          const newTotal = warehouses.reduce((s, w) => s + (parseInt(w.qty) || 0), 0);
+          await api(`/api/products/${item.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              title: product.title, description: product.description || '',
+              price: product.price, sku: product.sku || '',
+              stock_quantity: newTotal,
+              warehouses: JSON.stringify(warehouses),
+              images: product.images || '[]',
+              variants: product.variants || '[]',
+              category: product.category || ''
+            })
+          });
+          product.warehouses = JSON.stringify(warehouses);
+          product.stock_quantity = newTotal;
+        } else {
+          const newStock = Math.max(0, (product.stock_quantity || 0) - item.qty);
+          await api(`/api/products/${item.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              title: product.title, description: product.description || '',
+              price: product.price, sku: product.sku || '',
+              stock_quantity: newStock,
+              warehouses: '[]', images: product.images || '[]',
+              variants: product.variants || '[]', category: product.category || ''
+            })
+          });
+          product.stock_quantity = newStock;
+        }
       }
     }
-
     toast('Order created successfully');
     clearCart();
-    document.getElementById('customerName').value = '';
-    document.getElementById('customerPhone').value = '';
-    document.getElementById('deliveryAddress').value = '';
+    ['customerName','customerPhone','deliveryAddress','orderNotes'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('orderPlatform').value = '';
-    document.getElementById('orderNotes').value = '';
     document.getElementById('orderResult').innerHTML = '<span style="color:#22c55e">Order created successfully!</span>';
     setTimeout(() => document.getElementById('orderResult').innerHTML = '', 3000);
-    fetchOrders();
-    fetchStats();
-    loadProducts(); // refresh grid with updated stock numbers
+    fetchOrders(); fetchStats(); loadProducts();
     showSection('orders', document.querySelector('.nav-item'));
   } else {
     document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Failed to create order</span>';
   }
 }
 
-// ── PRODUCTS MANAGEMENT ─────────────────────────────────────────────────────
+// ── PRODUCT MANAGEMENT ──────────────────────────────────────────────────────
 async function fetchProducts() {
   const data = await api('/api/products');
   allProducts = data?.products || [];
@@ -687,65 +829,210 @@ async function fetchProducts() {
 
 function renderProducts() {
   const tbody = document.getElementById('productsBody');
-  tbody.innerHTML = allProducts.length ? allProducts.map(p => `
-    <tr>
+  tbody.innerHTML = allProducts.length ? allProducts.map(p => {
+    let imgs = []; try { imgs = typeof p.images === 'string' ? JSON.parse(p.images || '[]') : (p.images || []); } catch {}
+    let variants = []; try { variants = typeof p.variants === 'string' ? JSON.parse(p.variants || '[]') : (p.variants || []); } catch {}
+    const stock = getTotalStock(p);
+    const stockClass = stock === 0 ? 'stock-out' : stock < 10 ? 'stock-low' : 'stock-ok';
+    const stockLabel = stock === 0 ? 'Out of stock' : stock < 10 ? `${stock} — Low` : stock;
+    const imgCell = imgs[0]
+      ? `<img src="${imgs[0]}" class="prod-thumb" alt="${p.title}">`
+      : `<div class="prod-thumb-placeholder"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>`;
+    return `<tr>
+      <td>${imgCell}</td>
       <td style="font-weight:600">${p.title}</td>
       <td><span style="font-family:monospace;background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:12px">${p.sku || '—'}</span></td>
       <td style="font-weight:600">AED ${Number(p.price).toLocaleString()}</td>
-      <td><span style="font-weight:600;color:${(p.stock_quantity||0) < 10 ? '#ef4444' : '#22c55e'}">${p.stock_quantity || 0}</span></td>
+      <td style="color:var(--muted);font-size:13px">${variants.length > 0 ? `${variants.length} variant${variants.length>1?'s':''}` : '—'}</td>
+      <td><span class="stock-badge ${stockClass}">${stockLabel}</span></td>
       <td style="display:flex;gap:8px">
         <button onclick="editProduct('${p.id}')" class="btn btn-outline btn-sm">Edit</button>
         <button onclick="deleteProduct('${p.id}')" class="btn btn-danger btn-sm">Del</button>
       </td>
-    </tr>
-  `).join('') : '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No products yet. Click "Add Product" to start.</td></tr>';
+    </tr>`;
+  }).join('') : '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">No products yet. Click "Add Product" to start.</td></tr>';
 }
 
+// ── IMAGE UPLOAD ────────────────────────────────────────────────────────────
+function setupDragDrop() {
+  const zone = document.getElementById('uploadZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    handleFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+  });
+}
+
+function handleImageSelect(e) { handleFiles(Array.from(e.target.files)); }
+
+function handleFiles(files) {
+  if (productImages.length + files.length > 5) { toast('Max 5 images allowed', 'error'); return; }
+  files.forEach(file => {
+    if (file.size > 2 * 1024 * 1024) { toast(`${file.name} exceeds 2MB`, 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = e => { productImages.push(e.target.result); renderImagePreview(); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderImagePreview() {
+  const preview = document.getElementById('imagePreview');
+  preview.innerHTML = productImages.map((src, i) => `
+    <div class="upload-thumb-wrap">
+      <img src="${src}" class="upload-thumb" alt="Preview ${i+1}">
+      <button class="upload-thumb-remove" onclick="removeImage(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeImage(index) { productImages.splice(index, 1); renderImagePreview(); }
+
+// ── VARIANTS ────────────────────────────────────────────────────────────────
+function addVariantRow(name='', value='', price='', sku='') {
+  const container = document.getElementById('variantRows');
+  const div = document.createElement('div');
+  div.className = 'variant-row';
+  div.innerHTML = `
+    <input type="text" class="form-control v-name" placeholder="e.g. Size" value="${name}">
+    <input type="text" class="form-control v-value" placeholder="e.g. Large" value="${value}">
+    <input type="number" class="form-control v-price" placeholder="${document.getElementById('pPrice')?.value || '0'}" value="${price}" min="0" step="0.01">
+    <input type="text" class="form-control v-sku" placeholder="SKU suffix" value="${sku}">
+    <button type="button" onclick="this.parentElement.remove(); updateTotalStock();" style="background:#fee2e2;border:none;color:#ef4444;border-radius:6px;cursor:pointer;width:36px;height:36px;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
+  `;
+  container.appendChild(div);
+}
+
+function getVariants() {
+  return Array.from(document.querySelectorAll('#variantRows .variant-row')).map(row => ({
+    name: row.querySelector('.v-name').value.trim(),
+    value: row.querySelector('.v-value').value.trim(),
+    price: parseFloat(row.querySelector('.v-price').value) || 0,
+    sku: row.querySelector('.v-sku').value.trim()
+  })).filter(v => v.name || v.value);
+}
+
+// ── WAREHOUSES ──────────────────────────────────────────────────────────────
+function addWarehouseRow(name='', notes='', qty='') {
+  const container = document.getElementById('warehouseRows');
+  const div = document.createElement('div');
+  div.className = 'warehouse-row';
+  div.innerHTML = `
+    <input type="text" class="form-control w-name" placeholder="e.g. Dubai Main, Abu Dhabi" value="${name}">
+    <input type="text" class="form-control w-notes" placeholder="Optional notes" value="${notes}">
+    <input type="number" class="form-control w-qty" placeholder="0" value="${qty}" min="0" oninput="updateTotalStock()">
+    <button type="button" onclick="this.parentElement.remove(); updateTotalStock();" style="background:#fee2e2;border:none;color:#ef4444;border-radius:6px;cursor:pointer;width:36px;height:36px;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
+  `;
+  // Override grid for warehouse (4 cols)
+  div.style.gridTemplateColumns = '1fr 1fr 80px 36px';
+  container.appendChild(div);
+  updateTotalStock();
+}
+
+function getWarehouses() {
+  return Array.from(document.querySelectorAll('#warehouseRows .warehouse-row')).map(row => ({
+    name: row.querySelector('.w-name').value.trim(),
+    notes: row.querySelector('.w-notes').value.trim(),
+    qty: parseInt(row.querySelector('.w-qty').value) || 0
+  })).filter(w => w.name);
+}
+
+function updateTotalStock() {
+  const total = getWarehouses().reduce((s, w) => s + w.qty, 0);
+  const el = document.getElementById('totalStockDisplay');
+  if (el) el.textContent = total;
+}
+
+// ── OPEN / RESET PRODUCT MODAL ──────────────────────────────────────────────
 function openProductModal() {
   document.getElementById('pId').value = '';
   document.getElementById('pTitle').value = '';
   document.getElementById('pSku').value = '';
   document.getElementById('pPrice').value = '';
-  document.getElementById('pStock').value = '';
+  document.getElementById('pCategory').value = '';
   document.getElementById('pDesc').value = '';
+  document.getElementById('variantRows').innerHTML = '';
+  document.getElementById('warehouseRows').innerHTML = '';
+  document.getElementById('imagePreview').innerHTML = '';
+  document.getElementById('totalStockDisplay').textContent = '0';
+  productImages = [];
   document.getElementById('productModalTitle').textContent = 'Add Product';
+  // Add one default warehouse row
+  addWarehouseRow('Main Warehouse', '', '');
   document.getElementById('productModal').style.display = 'flex';
 }
 
 function editProduct(id) {
   const p = allProducts.find(x => x.id === id);
   if (!p) return;
+
   document.getElementById('pId').value = p.id;
   document.getElementById('pTitle').value = p.title;
   document.getElementById('pSku').value = p.sku || '';
   document.getElementById('pPrice').value = p.price;
-  document.getElementById('pStock').value = p.stock_quantity;
+  document.getElementById('pCategory').value = p.category || '';
   document.getElementById('pDesc').value = p.description || '';
+  document.getElementById('variantRows').innerHTML = '';
+  document.getElementById('warehouseRows').innerHTML = '';
+  document.getElementById('imagePreview').innerHTML = '';
   document.getElementById('productModalTitle').textContent = 'Edit Product';
+
+  // Load images
+  productImages = [];
+  try { productImages = typeof p.images === 'string' ? JSON.parse(p.images || '[]') : (p.images || []); } catch {}
+  renderImagePreview();
+
+  // Load variants
+  let variants = [];
+  try { variants = typeof p.variants === 'string' ? JSON.parse(p.variants || '[]') : (p.variants || []); } catch {}
+  variants.forEach(v => addVariantRow(v.name, v.value, v.price, v.sku));
+
+  // Load warehouses
+  let warehouses = [];
+  try { warehouses = typeof p.warehouses === 'string' ? JSON.parse(p.warehouses || '[]') : (p.warehouses || []); } catch {}
+  if (warehouses.length > 0) warehouses.forEach(w => addWarehouseRow(w.name, w.notes, w.qty));
+  else addWarehouseRow('Main Warehouse', '', p.stock_quantity || 0);
+
+  updateTotalStock();
   document.getElementById('productModal').style.display = 'flex';
 }
 
-async function saveProduct(e) {
-  e.preventDefault();
-  const id = document.getElementById('pId').value;
+async function saveProduct() {
+  const title = document.getElementById('pTitle').value.trim();
+  const price = parseFloat(document.getElementById('pPrice').value);
+  if (!title || isNaN(price)) { toast('Title and Price are required', 'error'); return; }
+
+  const btn = document.getElementById('saveProductBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const warehouses = getWarehouses();
+  const totalStock = warehouses.reduce((s, w) => s + w.qty, 0);
+
   const body = {
-    title: document.getElementById('pTitle').value,
-    sku: document.getElementById('pSku').value,
-    price: parseFloat(document.getElementById('pPrice').value),
-    stock_quantity: parseInt(document.getElementById('pStock').value),
-    description: document.getElementById('pDesc').value,
+    title,
+    sku: document.getElementById('pSku').value.trim(),
+    price,
+    description: document.getElementById('pDesc').value.trim(),
+    category: document.getElementById('pCategory').value.trim(),
+    stock_quantity: totalStock,
+    images: JSON.stringify(productImages),
+    variants: JSON.stringify(getVariants()),
+    warehouses: JSON.stringify(warehouses),
   };
+
+  const id = document.getElementById('pId').value;
   const data = id
     ? await api(`/api/products/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
     : await api('/api/products', { method: 'POST', body: JSON.stringify(body) });
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Product`;
+
   if (data?.success || data?.id) {
-    fetchProducts();
-    loadProducts();
+    fetchProducts(); loadProducts();
     closeModal('productModal');
     toast(id ? 'Product updated' : 'Product added');
-  } else {
-    toast('Failed to save', 'error');
-  }
+  } else toast('Failed to save product', 'error');
 }
 
 async function deleteProduct(id) {
@@ -754,7 +1041,7 @@ async function deleteProduct(id) {
   if (data?.success) { fetchProducts(); loadProducts(); toast('Product deleted'); }
 }
 
-// ── RTO ────────────────────────────────────────────────────────────────────
+// ── RTO ─────────────────────────────────────────────────────────────────────
 async function fetchRto() {
   const data = await api('/api/rto');
   allRto = Array.isArray(data) ? data : [];
@@ -763,16 +1050,10 @@ async function fetchRto() {
 
 function renderRto() {
   const container = document.getElementById('rtoList');
-  if (!allRto.length) {
-    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted)">No RTO cases found 🎉</div>`;
-    return;
-  }
+  if (!allRto.length) { container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted)">No RTO cases found 🎉</div>`; return; }
   const statusColors = {
-    'PLS FOLLOW UP ME': '#fef9c3;color:#854d0e',
-    'FOLLOWED UP': '#dbeafe;color:#1d4ed8',
-    'DELIVERED': '#d1fae5;color:#065f46',
-    'CANCELLED': '#fee2e2;color:#991b1b',
-    'REPROCESS': '#f3e8ff;color:#6b21a8'
+    'PLS FOLLOW UP ME':'#fef9c3;color:#854d0e','FOLLOWED UP':'#dbeafe;color:#1d4ed8',
+    'DELIVERED':'#d1fae5;color:#065f46','CANCELLED':'#fee2e2;color:#991b1b','REPROCESS':'#f3e8ff;color:#6b21a8'
   };
   container.innerHTML = allRto.map(r => `
     <div style="border:1px solid var(--border);border-radius:10px;padding:18px">
@@ -782,7 +1063,6 @@ function renderRto() {
           <div style="font-size:14px;font-weight:600;margin-top:2px">${r.customerName || r.customer_name || '—'}</div>
           ${r.phone ? `<div style="color:var(--muted);font-size:13px">📞 ${r.phone}</div>` : ''}
           ${r.reason ? `<div style="color:var(--muted);font-size:13px;margin-top:2px">Reason: ${r.reason}</div>` : ''}
-          ${r.courier ? `<div style="color:var(--muted);font-size:13px">Courier: ${r.courier}</div>` : ''}
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <span class="badge" style="background:${statusColors[r.status] || '#f1f5f9;color:#475569'}">${r.status || 'PLS FOLLOW UP ME'}</span>
@@ -790,8 +1070,7 @@ function renderRto() {
         </div>
       </div>
       ${r.notes ? `<div style="background:#f8fafc;border-radius:8px;padding:10px;font-size:13px;margin-top:12px;color:var(--muted)"><strong>Notes:</strong> ${r.notes}</div>` : ''}
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function openRtoModal(id, status, notes) {
@@ -803,14 +1082,7 @@ function openRtoModal(id, status, notes) {
 
 async function saveRto() {
   const id = document.getElementById('rtoId').value;
-  const data = await api(`/api/rto/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({
-      status: document.getElementById('rtoStatus').value,
-      notes: document.getElementById('rtoNotes').value,
-      csr: currentUser.email,
-    })
-  });
+  const data = await api(`/api/rto/${id}`, { method: 'PATCH', body: JSON.stringify({ status: document.getElementById('rtoStatus').value, notes: document.getElementById('rtoNotes').value, csr: currentUser.email }) });
   if (data?.success) { fetchRto(); closeModal('rtoModal'); toast('RTO updated'); }
   else toast('Update failed', 'error');
 }

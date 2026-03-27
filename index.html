@@ -65,8 +65,6 @@
   #toast.show { transform:translateY(0); opacity:1; }
   #toast.success { border-left:4px solid #22c55e; }
   #toast.error { border-left:4px solid #ef4444; }
-  
-  /* Product grid styles */
   .product-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-top:16px; }
   .product-card { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:all .2s; }
   .product-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.1); border-color:var(--primary); }
@@ -91,7 +89,6 @@
     </div>
     <span style="color:#fff;font-size:18px;font-weight:700">CartoMarto</span>
   </div>
-
   <div class="sidebar-section">
     <div class="sidebar-section-label">Main</div>
     <button class="nav-item active" onclick="showSection('orders',this)">
@@ -111,7 +108,6 @@
       RTO Follow-up
     </button>
   </div>
-
   <div class="sidebar-footer">
     <div style="display:flex;align-items:center;gap:10px;padding:10px 12px">
       <div style="width:36px;height:36px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700" id="sidebarAvatar">U</div>
@@ -146,7 +142,6 @@
         <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-pending">0</div><div class="stat-label">Pending</div></div><div class="stat-icon" style="background:#fefce8"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#eab308"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div></div>
         <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-rto">0</div><div class="stat-label">RTO</div></div><div class="stat-icon" style="background:#fef2f2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div></div></div>
       </div>
-
       <div class="card">
         <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
           <div class="tabs">
@@ -174,7 +169,6 @@
     <!-- ══ PLACE ORDER ══ -->
     <div class="page-section" id="section-place-order">
       <div style="display:grid;grid-template-columns:1fr 400px;gap:24px">
-        <!-- Products Panel -->
         <div class="card">
           <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
             <h3 style="font-size:16px;font-weight:700">Products</h3>
@@ -189,7 +183,6 @@
           </div>
         </div>
 
-        <!-- Order Builder Panel -->
         <div class="card">
           <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
             <h3 style="font-size:16px;font-weight:700">Order Builder</h3>
@@ -200,13 +193,11 @@
               <div id="cartItems" class="cart-items"></div>
               <div id="emptyCartMsg" class="empty-cart">No items in cart</div>
             </div>
-
             <div class="order-summary">
               <div class="summary-row"><span>Subtotal</span><span id="subtotal">AED 0.00</span></div>
               <div class="summary-row"><span>Shipping</span><span id="shipping">AED 15.00</span></div>
               <div class="summary-row total"><span>Total</span><span id="totalAmount">AED 15.00</span></div>
             </div>
-
             <div style="margin-top:20px">
               <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Customer Details</h4>
               <div class="form-group">
@@ -242,7 +233,6 @@
                 <textarea id="orderNotes" class="form-control" rows="2" placeholder="Special instructions"></textarea>
               </div>
             </div>
-
             <div style="display:flex;gap:12px;margin-top:20px">
               <button onclick="clearCart()" class="btn btn-outline" style="flex:1">Clear Cart</button>
               <button onclick="submitOrder()" class="btn btn-primary" style="flex:1">Create Order</button>
@@ -375,12 +365,7 @@ let cart = [];
 window.addEventListener('DOMContentLoaded', () => {
   token = localStorage.getItem('token');
   const userStr = localStorage.getItem('user');
-  
-  if (!token || !userStr) { 
-    window.location.href = 'login.html'; 
-    return; 
-  }
-  
+  if (!token || !userStr) { window.location.href = 'login.html'; return; }
   try {
     currentUser = JSON.parse(userStr);
     const displayName = currentUser.email.split('@')[0];
@@ -395,7 +380,6 @@ window.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'login.html';
     return;
   }
-
   fetchStats();
   fetchOrders();
   fetchProducts();
@@ -407,26 +391,16 @@ async function api(path, opts = {}) {
   try {
     const res = await fetch(`${API_URL}${path}`, {
       ...opts,
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': `Bearer ${token}`, 
-        ...(opts.headers || {}) 
-      }
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...(opts.headers || {}) }
     });
-    if (res.status === 401) { 
-      logout(); 
-      return null; 
-    }
+    if (res.status === 401) { logout(); return null; }
     return res.json();
-  } catch (err) { 
-    console.error('API error:', err);
-    return null; 
-  }
+  } catch (err) { console.error('API error:', err); return null; }
 }
 
 function toast(msg, type = 'success') {
   const el = document.getElementById('toast');
-  el.textContent = msg; 
+  el.textContent = msg;
   el.className = `show ${type}`;
   setTimeout(() => el.className = '', 3000);
 }
@@ -442,14 +416,8 @@ function showSection(name, btn) {
   if (name === 'place-order') loadProducts();
 }
 
-function logout() { 
-  localStorage.clear(); 
-  window.location.href = 'login.html'; 
-}
-
-function closeModal(id) { 
-  document.getElementById(id).style.display = 'none'; 
-}
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 // ── STATS ─────────────────────────────────────────────────────────────────
 async function fetchStats() {
@@ -484,15 +452,10 @@ function renderOrders() {
     (o.customer_name || '').toLowerCase().includes(search) ||
     (o.customer_phone || '').includes(search)
   );
-
-  const statusClasses = { 
-    pending: 'badge-Pending', 
-    fulfilled: 'badge-Delivered', 
-    delivered: 'badge-Delivered',
-    cancelled: 'badge-Cancelled',
-    rto: 'badge-RTO'
+  const statusClasses = {
+    pending: 'badge-Pending', fulfilled: 'badge-Delivered',
+    delivered: 'badge-Delivered', cancelled: 'badge-Cancelled', rto: 'badge-RTO'
   };
-  
   const tbody = document.getElementById('ordersBody');
   tbody.innerHTML = rows.length ? rows.map(o => `
     <tr>
@@ -503,7 +466,10 @@ function renderOrders() {
       <td style="font-weight:600">AED ${Number(o.total_price || 0).toLocaleString()}</td>
       <td><span class="badge ${statusClasses[o.status] || 'badge-Pending'}">${o.status || 'pending'}</span></td>
       <td style="color:var(--muted);font-size:13px">${new Date(o.created_at).toLocaleDateString()}</td>
-      <td><button onclick="openOrderDetail('${o.id}')" class="btn btn-outline btn-sm">View</button></td>
+      <td style="display:flex;gap:8px">
+        <button onclick="openOrderDetail('${o.id}')" class="btn btn-outline btn-sm">View</button>
+        <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm">Del</button>
+      </td>
     </tr>
   `).join('') : '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">No orders found</td></tr>';
 }
@@ -512,19 +478,14 @@ function openOrderDetail(id) {
   const o = allOrders.find(x => x.id === id);
   if (!o) return;
   editingOrderId = id;
-
   let products = [];
-  try { 
-    products = typeof o.products === 'string' ? JSON.parse(o.products || '[]') : (o.products || []); 
-  } catch {}
-
+  try { products = typeof o.products === 'string' ? JSON.parse(o.products || '[]') : (o.products || []); } catch {}
   const items = products.map(p => `
     <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9">
       <span>${p.title || p.name || 'Product'} × ${p.qty || p.quantity || 1}</span>
       <span style="font-weight:600">AED ${Number(p.price || 0).toLocaleString()}</span>
     </div>
   `).join('');
-
   document.getElementById('orderModalBody').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
       <div><div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px">ORDER ID</div><div style="font-weight:700;color:#1d4ed8">${o.order_number || o.id}</div></div>
@@ -547,43 +508,49 @@ function openOrderDetail(id) {
 
 async function saveOrderUpdate() {
   const status = document.getElementById('updateStatus').value;
-  const data = await api(`/api/orders/${editingOrderId}`, {
-    method: 'PATCH', 
-    body: JSON.stringify({ status })
-  });
+  const data = await api(`/api/orders/${editingOrderId}`, { method: 'PATCH', body: JSON.stringify({ status }) });
   if (data?.success) {
     const idx = allOrders.findIndex(o => o.id === editingOrderId);
-    if (idx >= 0) { allOrders[idx].status = status; }
-    renderOrders(); 
+    if (idx >= 0) allOrders[idx].status = status;
+    renderOrders();
     fetchStats();
     closeModal('orderModal');
     toast('Order updated');
-  } else { 
-    toast('Update failed', 'error'); 
+  } else {
+    toast('Update failed', 'error');
+  }
+}
+
+// ── DELETE ORDER ──────────────────────────────────────────────────────────
+async function deleteOrder(id) {
+  if (!confirm('Delete this order? This cannot be undone.')) return;
+  const data = await api(`/api/orders/${id}`, { method: 'DELETE' });
+  if (data?.success) {
+    allOrders = allOrders.filter(o => o.id !== id);
+    renderOrders();
+    fetchStats();
+    toast('Order deleted');
+  } else {
+    toast('Delete failed', 'error');
   }
 }
 
 // ── PRODUCTS & CART ─────────────────────────────────────────────────────────
 async function loadProducts(search = '') {
   const data = await api(`/api/products${search ? `?query=${encodeURIComponent(search)}` : ''}`);
-  if (data?.products) { 
-    allProducts = data.products; 
-    renderProductGrid(); 
-  }
+  if (data?.products) { allProducts = data.products; renderProductGrid(); }
 }
 
 function renderProductGrid() {
   const grid = document.getElementById('productGrid');
   const noProductsMsg = document.getElementById('noProductsMsg');
   if (!grid) return;
-  
-  if (!allProducts.length) { 
-    grid.innerHTML = ''; 
+  if (!allProducts.length) {
+    grid.innerHTML = '';
     if (noProductsMsg) noProductsMsg.style.display = 'block';
-    return; 
+    return;
   }
   if (noProductsMsg) noProductsMsg.style.display = 'none';
-  
   grid.innerHTML = allProducts.map(p => `
     <div class="product-card" onclick="addToCart('${p.id}', '${p.title}', ${p.price})">
       <div class="product-image">
@@ -592,13 +559,22 @@ function renderProductGrid() {
       <div class="product-info">
         <div class="product-title">${p.title}</div>
         <div class="product-price">AED ${Number(p.price).toFixed(2)}</div>
-        <div class="product-stock" style="font-size:12px;color:var(--muted);margin-top:4px">Stock: ${p.stock_quantity || 0}</div>
+        <div style="font-size:12px;color:${(p.stock_quantity||0)<5?'#ef4444':'var(--muted)'};margin-top:4px">
+          Stock: ${p.stock_quantity || 0}${(p.stock_quantity||0)<5?' ⚠️':''}
+        </div>
       </div>
     </div>
   `).join('');
 }
 
 function addToCart(id, title, price) {
+  // Check available stock
+  const product = allProducts.find(p => p.id === id);
+  const currentQty = cart.find(item => item.id === id)?.qty || 0;
+  if (product && currentQty >= (product.stock_quantity || 0)) {
+    toast(`Only ${product.stock_quantity} in stock`, 'error');
+    return;
+  }
   const existing = cart.find(item => item.id === id);
   if (existing) existing.qty++;
   else cart.push({ id, title, price, qty: 1 });
@@ -609,11 +585,9 @@ function updateCartDisplay() {
   const cartDiv = document.getElementById('cartItems');
   const emptyMsg = document.getElementById('emptyCartMsg');
   let subtotal = 0;
-  
-  if (!cart.length) { 
-    cartDiv.innerHTML = ''; 
+  if (!cart.length) {
+    cartDiv.innerHTML = '';
     if (emptyMsg) emptyMsg.style.display = 'block';
-    subtotal = 0;
   } else {
     if (emptyMsg) emptyMsg.style.display = 'none';
     cartDiv.innerHTML = cart.map((item, i) => `
@@ -628,32 +602,20 @@ function updateCartDisplay() {
     subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
   }
   const shipping = 15;
-  const total = subtotal + shipping;
   document.getElementById('subtotal').textContent = `AED ${subtotal.toFixed(2)}`;
-  document.getElementById('totalAmount').textContent = `AED ${total.toFixed(2)}`;
+  document.getElementById('totalAmount').textContent = `AED ${(subtotal + shipping).toFixed(2)}`;
 }
 
-function updateQty(index, qty) { 
-  cart[index].qty = Math.max(1, parseInt(qty) || 1); 
-  updateCartDisplay(); 
-}
-
-function removeFromCart(index) { 
-  cart.splice(index, 1); 
-  updateCartDisplay(); 
-}
-
-function clearCart() { 
-  cart = []; 
-  updateCartDisplay(); 
-}
+function updateQty(index, qty) { cart[index].qty = Math.max(1, parseInt(qty) || 1); updateCartDisplay(); }
+function removeFromCart(index) { cart.splice(index, 1); updateCartDisplay(); }
+function clearCart() { cart = []; updateCartDisplay(); }
 
 async function submitOrder() {
   const name = document.getElementById('customerName').value.trim();
   const phone = document.getElementById('customerPhone').value.trim();
   const address = document.getElementById('deliveryAddress').value.trim();
   const platform = document.getElementById('orderPlatform').value;
-  
+
   if (!name || !phone || !address || !platform) {
     document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Please fill all required fields</span>';
     return;
@@ -662,7 +624,7 @@ async function submitOrder() {
     document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Cart is empty</span>';
     return;
   }
-  
+
   const orderData = {
     order_number: `ORD-${Date.now()}`,
     customer_name: name,
@@ -673,11 +635,31 @@ async function submitOrder() {
     status: 'pending',
     csr: currentUser.email,
     notes: document.getElementById('orderNotes').value,
-    products: cart.map(item => ({ title: item.title, price: item.price, quantity: item.qty }))
+    products: cart.map(item => ({ id: item.id, title: item.title, price: item.price, quantity: item.qty }))
   };
-  
+
   const data = await api('/api/orders', { method: 'POST', body: JSON.stringify(orderData) });
+
   if (data?.success) {
+    // ── Deduct inventory for each cart item ──
+    for (const item of cart) {
+      const product = allProducts.find(p => p.id === item.id);
+      if (product) {
+        const newStock = Math.max(0, (product.stock_quantity || 0) - item.qty);
+        await api(`/api/products/${item.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            title: product.title,
+            description: product.description || '',
+            price: product.price,
+            sku: product.sku || '',
+            stock_quantity: newStock,
+          })
+        });
+        product.stock_quantity = newStock; // update local state immediately
+      }
+    }
+
     toast('Order created successfully');
     clearCart();
     document.getElementById('customerName').value = '';
@@ -689,6 +671,7 @@ async function submitOrder() {
     setTimeout(() => document.getElementById('orderResult').innerHTML = '', 3000);
     fetchOrders();
     fetchStats();
+    loadProducts(); // refresh grid with updated stock numbers
     showSection('orders', document.querySelector('.nav-item'));
   } else {
     document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Failed to create order</span>';
@@ -709,7 +692,7 @@ function renderProducts() {
       <td style="font-weight:600">${p.title}</td>
       <td><span style="font-family:monospace;background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:12px">${p.sku || '—'}</span></td>
       <td style="font-weight:600">AED ${Number(p.price).toLocaleString()}</td>
-      <td><span style="font-weight:600;color:${p.stock_quantity < 10 ? '#ef4444' : '#22c55e'}">${p.stock_quantity || 0}</span></td>
+      <td><span style="font-weight:600;color:${(p.stock_quantity||0) < 10 ? '#ef4444' : '#22c55e'}">${p.stock_quantity || 0}</span></td>
       <td style="display:flex;gap:8px">
         <button onclick="editProduct('${p.id}')" class="btn btn-outline btn-sm">Edit</button>
         <button onclick="deleteProduct('${p.id}')" class="btn btn-danger btn-sm">Del</button>
@@ -755,25 +738,20 @@ async function saveProduct(e) {
   const data = id
     ? await api(`/api/products/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
     : await api('/api/products', { method: 'POST', body: JSON.stringify(body) });
-
   if (data?.success || data?.id) {
     fetchProducts();
     loadProducts();
     closeModal('productModal');
     toast(id ? 'Product updated' : 'Product added');
-  } else { 
-    toast('Failed to save', 'error'); 
+  } else {
+    toast('Failed to save', 'error');
   }
 }
 
 async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return;
   const data = await api(`/api/products/${id}`, { method: 'DELETE' });
-  if (data?.success) { 
-    fetchProducts(); 
-    loadProducts();
-    toast('Product deleted'); 
-  }
+  if (data?.success) { fetchProducts(); loadProducts(); toast('Product deleted'); }
 }
 
 // ── RTO ────────────────────────────────────────────────────────────────────
@@ -833,13 +811,8 @@ async function saveRto() {
       csr: currentUser.email,
     })
   });
-  if (data?.success) {
-    fetchRto(); 
-    closeModal('rtoModal'); 
-    toast('RTO updated');
-  } else { 
-    toast('Update failed', 'error'); 
-  }
+  if (data?.success) { fetchRto(); closeModal('rtoModal'); toast('RTO updated'); }
+  else toast('Update failed', 'error');
 }
 </script>
 </body>

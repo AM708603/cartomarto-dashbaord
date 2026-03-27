@@ -66,185 +66,20 @@
   #toast.success { border-left:4px solid #22c55e; }
   #toast.error { border-left:4px solid #ef4444; }
   
-  /* Create Order specific styles */
-  .create-order-layout {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 24px;
-    align-items: start;
-  }
-  
-  .products-panel, .order-panel {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .panel-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0;
-  }
-  
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 12px;
-    max-height: 600px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-  
-  .product-card {
-    background: white;
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .product-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-color: var(--primary);
-  }
-  
-  .product-image {
-    height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8fafc;
-  }
-  
-  .product-info {
-    padding: 10px 12px;
-  }
-  
-  .product-title {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    line-height: 1.3;
-  }
-  
-  .product-price {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--primary);
-  }
-  
-  .product-stock {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-  
-  .cart-items {
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  
-  .cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  
-  .cart-item:last-child {
-    border-bottom: none;
-  }
-  
-  .cart-item-details {
-    flex: 1;
-  }
-  
-  .cart-item-title {
-    font-weight: 600;
-    font-size: 13px;
-  }
-  
-  .cart-item-price {
-    font-size: 12px;
-    color: var(--muted);
-  }
-  
-  .cart-item-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .cart-qty {
-    width: 55px;
-    padding: 5px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    text-align: center;
-  }
-  
-  .empty-cart {
-    text-align: center;
-    padding: 40px;
-    color: var(--muted);
-  }
-  
-  .order-summary {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 16px;
-    margin: 16px 0;
-  }
-  
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-  }
-  
-  .summary-row.total {
-    border-top: 2px solid var(--border);
-    margin-top: 8px;
-    padding-top: 12px;
-    font-weight: 700;
-    font-size: 16px;
-  }
-  
-  .customer-section {
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-  }
-  
-  .customer-section-title {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
-  
-  .action-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-  }
-  
-  .action-buttons button {
-    flex: 1;
-  }
+  /* Product grid styles */
+  .product-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-top:16px; }
+  .product-card { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:all .2s; }
+  .product-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.1); border-color:var(--primary); }
+  .product-image { height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; }
+  .product-info { padding:12px; }
+  .product-title { font-weight:600; font-size:14px; margin-bottom:4px; }
+  .product-price { color:var(--primary); font-weight:700; font-size:14px; }
+  .cart-items { max-height:400px; overflow-y:auto; }
+  .cart-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border); }
+  .empty-cart { text-align:center; padding:40px; color:var(--muted); }
+  .order-summary { background:#f8fafc; border-radius:12px; padding:16px; margin-top:16px; }
+  .summary-row { display:flex; justify-content:space-between; padding:8px 0; }
+  .summary-row.total { border-top:2px solid var(--border); margin-top:8px; padding-top:12px; font-weight:700; font-size:16px; }
 </style>
 </head>
 <body>
@@ -324,137 +159,96 @@
           <input type="text" id="orderSearch" class="form-control" placeholder="Search..." oninput="renderOrders()" style="width:200px;padding:8px 12px" />
         </div>
         <div style="overflow-x:auto">
-           <table>
+          <table>
             <thead>
-               <tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Platform</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+              <tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Platform</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr>
             </thead>
             <tbody id="ordersBody">
-               <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Loading orders...</td></tr>
+              <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Loading orders...</td></tr>
             </tbody>
-           </table>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- ══ PLACE ORDER (EXACT MATCH) ══ -->
+    <!-- ══ PLACE ORDER ══ -->
     <div class="page-section" id="section-place-order">
-      <div class="create-order-layout">
+      <div style="display:grid;grid-template-columns:1fr 400px;gap:24px">
         <!-- Products Panel -->
-        <div class="products-panel">
-          <div class="panel-header">
-            <h3 class="panel-title">Products</h3>
-            <div style="display:flex;gap:10px;">
-              <div style="position:relative;">
-                <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;"></i>
-                <input type="text" id="productSearchInput" class="form-control" placeholder="Search products..." style="padding-left:32px;width:200px;" oninput="loadProducts(this.value)">
-              </div>
+        <div class="card">
+          <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:16px;font-weight:700">Products</h3>
+            <div style="display:flex;gap:10px;margin-top:8px">
+              <input type="text" id="productSearchInput" class="form-control" placeholder="Search products..." style="width:200px" oninput="loadProducts(this.value)">
               <button onclick="openProductModal()" class="btn btn-primary btn-sm">+ Add Product</button>
             </div>
           </div>
-          <div class="product-grid" id="productGrid"></div>
-          <div id="noProductsMsg" class="empty-cart" style="display:none;text-align:center;padding:40px;">No products found</div>
+          <div style="padding:20px">
+            <div class="product-grid" id="productGrid"></div>
+            <div id="noProductsMsg" class="empty-cart" style="display:none">No products found</div>
+          </div>
         </div>
 
         <!-- Order Builder Panel -->
-        <div class="order-panel">
-          <div class="panel-header">
-            <h3 class="panel-title">Order Builder</h3>
+        <div class="card">
+          <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:16px;font-weight:700">Order Builder</h3>
           </div>
-          
-          <!-- Cart Items -->
-          <div style="margin-bottom:20px;">
-            <h4 style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">CART ITEMS</h4>
-            <div id="cartItems" class="cart-items"></div>
-            <div id="emptyCartMsg" class="empty-cart">No items in cart</div>
-          </div>
+          <div style="padding:20px">
+            <div style="margin-bottom:20px">
+              <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Cart Items</h4>
+              <div id="cartItems" class="cart-items"></div>
+              <div id="emptyCartMsg" class="empty-cart">No items in cart</div>
+            </div>
 
-          <!-- Order Summary -->
-          <div class="order-summary">
-            <h4 style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">ORDER SUMMARY</h4>
-            <div class="summary-row">
-              <span>Subtotal</span>
-              <span id="subtotal">AED 0.00</span>
+            <div class="order-summary">
+              <div class="summary-row"><span>Subtotal</span><span id="subtotal">AED 0.00</span></div>
+              <div class="summary-row"><span>Shipping</span><span id="shipping">AED 15.00</span></div>
+              <div class="summary-row total"><span>Total</span><span id="totalAmount">AED 15.00</span></div>
             </div>
-            <div class="summary-row">
-              <span>Shipping</span>
-              <span id="shipping">AED 15.00</span>
-            </div>
-            <div class="summary-row total">
-              <span>Total</span>
-              <span id="totalAmount">AED 15.00</span>
-            </div>
-          </div>
 
-          <!-- Customer Details -->
-          <div class="customer-section">
-            <h4 class="customer-section-title">Customer Details</h4>
-            
-            <div class="form-group">
-              <label class="form-label">Full Name *</label>
-              <input type="text" id="customerName" class="form-control" placeholder="Enter customer's full name">
-            </div>
-            
-            <div class="form-group">
-              <label class="form-label">Mobile Number *</label>
-              <div class="form-row" style="gap:8px;">
-                <select id="countryCode" class="form-control" style="width:100px;">
-                  <option value="+971">UAE +971</option>
-                  <option value="+92">Pakistan +92</option>
-                  <option value="+91">India +91</option>
-                  <option value="+94">Sri Lanka +94</option>
-                  <option value="+63">Philippines +63</option>
+            <div style="margin-top:20px">
+              <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Customer Details</h4>
+              <div class="form-group">
+                <label class="form-label">Customer Name *</label>
+                <input type="text" id="customerName" class="form-control" placeholder="Full name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone *</label>
+                <div class="form-row" style="gap:8px">
+                  <select id="countryCode" class="form-control" style="width:100px">
+                    <option value="+971">+971 (UAE)</option>
+                    <option value="+92">+92 (PK)</option>
+                    <option value="+91">+91 (IN)</option>
+                  </select>
+                  <input type="text" id="customerPhone" class="form-control" placeholder="501234567">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Delivery Address *</label>
+                <textarea id="deliveryAddress" class="form-control" rows="2" placeholder="Complete address"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Platform *</label>
+                <select id="orderPlatform" class="form-control">
+                  <option value="">Select Platform</option>
+                  <option>CCWA</option><option>CCFB</option><option>CGWA</option>
+                  <option>CGFB</option><option>WWDWA</option><option>WWDFB</option>
+                  <option>TSDFB</option><option>AiSensy</option>
                 </select>
-                <input type="tel" id="customerPhone" class="form-control" placeholder="52XXXXXXX">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea id="orderNotes" class="form-control" rows="2" placeholder="Special instructions"></textarea>
               </div>
             </div>
-            
-            <div class="form-group">
-              <label class="form-label">Emirates *</label>
-              <select id="customerEmirates" class="form-control">
-                <option value="">Select Emirates</option>
-                <option>Abu Dhabi</option>
-                <option>Dubai</option>
-                <option>Sharjah</option>
-                <option>Ajman</option>
-                <option>Ras Al Khaimah</option>
-                <option>Fujairah</option>
-                <option>Umm Al Quwain</option>
-                <option>Al Ain</option>
-              </select>
-            </div>
-            
-            <div class="form-group">
-              <label class="form-label">Platform *</label>
-              <select id="orderPlatform" class="form-control">
-                <option value="">Select Platform</option>
-                <option>CCWA</option>
-                <option>CCFB</option>
-                <option>CGWA</option>
-                <option>CGFB</option>
-                <option>WWDWA</option>
-                <option>WWDFB</option>
-                <option>TSDFB</option>
-                <option>AiSensy</option>
-              </select>
-            </div>
-            
-            <div class="form-group">
-              <label class="form-label">Delivery Address *</label>
-              <textarea id="deliveryAddress" class="form-control" rows="3" placeholder="Enter complete delivery address including building, street, area, and any landmarks"></textarea>
-            </div>
-            
-            <div class="form-group">
-              <label class="form-label optional-label">Additional Notes</label>
-              <textarea id="orderNotes" class="form-control" rows="2" placeholder="Enter any special instructions, delivery preferences, or additional information"></textarea>
-            </div>
-          </div>
 
-          <!-- Action Buttons -->
-          <div class="action-buttons">
-            <button onclick="clearCart()" class="btn btn-outline">Clear Cart</button>
-            <button onclick="submitOrder()" class="btn btn-primary">Create Order</button>
+            <div style="display:flex;gap:12px;margin-top:20px">
+              <button onclick="clearCart()" class="btn btn-outline" style="flex:1">Clear Cart</button>
+              <button onclick="submitOrder()" class="btn btn-primary" style="flex:1">Create Order</button>
+            </div>
+            <div id="orderResult" style="margin-top:12px;font-size:13px"></div>
           </div>
-          <div id="orderResult" style="margin-top:12px;font-size:13px;text-align:center;"></div>
         </div>
       </div>
     </div>
@@ -468,10 +262,10 @@
         <div style="overflow-x:auto">
           <table>
             <thead>
-               <tr><th>Title</th><th>SKU</th><th>Price (AED)</th><th>Stock</th><th>Actions</th></tr>
+              <tr><th>Title</th><th>SKU</th><th>Price (AED)</th><th>Stock</th><th>Actions</th></tr>
             </thead>
             <tbody id="productsBody">
-               <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Loading products...</td></tr>
+              <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Loading products...</td></tr>
             </tbody>
           </table>
         </div>
@@ -769,7 +563,7 @@ async function saveOrderUpdate() {
   }
 }
 
-// ── CREATE ORDER FUNCTIONS ─────────────────────────────────────────────────
+// ── PRODUCTS & CART ─────────────────────────────────────────────────────────
 async function loadProducts(search = '') {
   const data = await api(`/api/products${search ? `?query=${encodeURIComponent(search)}` : ''}`);
   if (data?.products) { 
@@ -793,12 +587,12 @@ function renderProductGrid() {
   grid.innerHTML = allProducts.map(p => `
     <div class="product-card" onclick="addToCart('${p.id}', '${p.title}', ${p.price})">
       <div class="product-image">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       </div>
       <div class="product-info">
         <div class="product-title">${p.title}</div>
         <div class="product-price">AED ${Number(p.price).toFixed(2)}</div>
-        <div class="product-stock">Stock: ${p.stock_quantity || 0}</div>
+        <div class="product-stock" style="font-size:12px;color:var(--muted);margin-top:4px">Stock: ${p.stock_quantity || 0}</div>
       </div>
     </div>
   `).join('');
@@ -819,34 +613,20 @@ function updateCartDisplay() {
   if (!cart.length) { 
     cartDiv.innerHTML = ''; 
     if (emptyMsg) emptyMsg.style.display = 'block';
+    subtotal = 0;
   } else {
     if (emptyMsg) emptyMsg.style.display = 'none';
-    cartDiv.innerHTML = cart.map((item, i) => {
-      subtotal += item.price * item.qty;
-      return `
-        <div class="cart-item">
-          <div class="cart-item-details">
-            <div class="cart-item-title">${item.title}</div>
-            <div class="cart-item-price">AED ${item.price.toFixed(2)} each</div>
-          </div>
-          <div class="cart-item-actions">
-            <input type="number" class="cart-qty" value="${item.qty}" min="1" max="99" data-index="${i}" onchange="updateQty(${i}, this.value)">
-            <button class="btn btn-danger btn-sm" onclick="removeFromCart(${i})">✕</button>
-          </div>
+    cartDiv.innerHTML = cart.map((item, i) => `
+      <div class="cart-item">
+        <div><strong>${item.title}</strong><br><span style="font-size:12px;color:var(--muted)">AED ${item.price}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" value="${item.qty}" min="1" max="99" style="width:60px;padding:4px;border:1px solid var(--border);border-radius:6px" onchange="updateQty(${i}, this.value)">
+          <button class="btn btn-danger btn-sm" onclick="removeFromCart(${i})">✕</button>
         </div>
-      `;
-    }).join('');
-    
-    // Add event listeners for quantity inputs
-    document.querySelectorAll('.cart-qty').forEach(input => {
-      input.addEventListener('change', (e) => {
-        const idx = parseInt(e.target.dataset.index);
-        cart[idx].qty = Math.max(1, parseInt(e.target.value) || 1);
-        updateCartDisplay();
-      });
-    });
+      </div>
+    `).join('');
+    subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
   }
-  
   const shipping = 15;
   const total = subtotal + shipping;
   document.getElementById('subtotal').textContent = `AED ${subtotal.toFixed(2)}`;
@@ -871,11 +651,10 @@ function clearCart() {
 async function submitOrder() {
   const name = document.getElementById('customerName').value.trim();
   const phone = document.getElementById('customerPhone').value.trim();
-  const emirates = document.getElementById('customerEmirates').value;
   const address = document.getElementById('deliveryAddress').value.trim();
   const platform = document.getElementById('orderPlatform').value;
   
-  if (!name || !phone || !emirates || !address || !platform) {
+  if (!name || !phone || !address || !platform) {
     document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Please fill all required fields</span>';
     return;
   }
@@ -888,7 +667,7 @@ async function submitOrder() {
     order_number: `ORD-${Date.now()}`,
     customer_name: name,
     customer_phone: document.getElementById('countryCode').value + phone,
-    delivery_address: address + ', ' + emirates,
+    delivery_address: address,
     platform: platform,
     total_price: cart.reduce((sum, item) => sum + (item.price * item.qty), 0) + 15,
     status: 'pending',
@@ -903,7 +682,6 @@ async function submitOrder() {
     clearCart();
     document.getElementById('customerName').value = '';
     document.getElementById('customerPhone').value = '';
-    document.getElementById('customerEmirates').value = '';
     document.getElementById('deliveryAddress').value = '';
     document.getElementById('orderPlatform').value = '';
     document.getElementById('orderNotes').value = '';

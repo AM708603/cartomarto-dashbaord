@@ -32,14 +32,6 @@
     padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;
     background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 14px;
   }
-  .cred-badge {
-    display: inline-block; padding: 2px 8px; border-radius: 4px;
-    background: #dbeafe; color: #1d4ed8; font-family: monospace; font-weight: 700; font-size: 12px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .cred-badge:hover { background: #bfdbfe; transform: scale(1.02); }
-  .shimmer { animation: shimmer 2s infinite; }
-  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.6} }
 </style>
 </head>
 <body>
@@ -139,7 +131,7 @@
         <button type="submit" class="btn-primary" id="loginBtn">Sign In to Dashboard</button>
       </form>
 
-    <div style="margin-top:24px;text-align:center;font-size:13px;color:#94a3b8">
+      <div style="margin-top:24px;text-align:center;font-size:13px;color:#94a3b8">
         Use your CartoMarto credentials to sign in
       </div>
     </div>
@@ -148,8 +140,23 @@
 
 <script>
   // ── CONFIG ──────────────────────────────────────────────────────────────────
-  // IMPORTANT: Change this to your actual Cloudflare Worker URL
   const API_URL = 'https://cartomarto-api.borntow2.workers.dev';
+
+  // ── ROLE-BASED REDIRECTION FUNCTION ─────────────────────────────────────────
+  function redirectByRole(role) {
+    switch(role) {
+      case 'admin':
+        window.location.replace('/admin.html');
+        break;
+      case 'manager':
+        window.location.replace('/manager.html');
+        break;
+      default:
+        // user, csr, or any other role goes to index.html (CSR dashboard)
+        window.location.replace('/index.html');
+        break;
+    }
+  }
 
   // ── UTILS ───────────────────────────────────────────────────────────────────
   function showError(msg) {
@@ -168,37 +175,30 @@
     document.getElementById('alertBox').style.display = 'none'; 
   }
 
-  function fillCredentials(email, pass) {
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = pass;
-    hideError();
-    // Optional: auto-submit after filling
-    // setTimeout(() => document.getElementById('loginForm').dispatchEvent(new Event('submit')), 100);
-  }
-
   function togglePassword() {
     const input = document.getElementById('password');
     input.type = input.type === 'password' ? 'text' : 'password';
   }
 
-  // Auto-redirect if already logged in (using your app's token format)
+  // Auto-redirect if already logged in (role-based)
   window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    const userStr = localStorage.getItem('user');
     
-    if (token && user) {
+    if (token && userStr) {
       try {
-        const userData = JSON.parse(user);
+        const user = JSON.parse(userStr);
         // Verify token hasn't expired
         const payload = JSON.parse(atob(token));
         if (payload.exp && Date.now() < payload.exp * 1000) {
-          window.location.href = '/index.html';
+          // Redirect based on user role
+          redirectByRole(user.role);
         } else {
           // Token expired, clear storage
           localStorage.clear();
         }
       } catch (e) {
-        // Invalid token, clear storage
+        console.error('Auto-redirect error:', e);
         localStorage.clear();
       }
     }
@@ -226,12 +226,17 @@
       const data = await response.json();
 
       if (response.ok && data.token) {
-        // Store token in localStorage (using your app's key names)
+        // Clear any existing data first
+        localStorage.clear();
+        
+        // Store token and user data
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Redirect to dashboard
-        window.location.href = '/index.html';
+        console.log('Login successful! User role:', data.user.role);
+        
+        // Redirect based on user role
+        redirectByRole(data.user.role);
       } else {
         showError(data.error || 'Invalid email or password');
       }

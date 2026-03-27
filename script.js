@@ -1,32 +1,34 @@
 // API Configuration
-const API_URL = 'https://cartomarto-api.borntow2.workers.dev'; // FIX: removed trailing slash
+const API_URL = 'https://cartomarto-api.borntow2.workers.dev';
 
 let allOrders = [];
 let filteredOrders = [];
 let currentPage = 1;
 let ordersPerPage = 10;
-let token = localStorage.getItem('token');
+let token = localStorage.getItem('token'); // Initial value, but will be refreshed
 
-// Check authentication
-// FIX: removed call to /api/auth/check (route doesn't exist in worker).
-// Instead we validate the token locally — it's a base64-encoded JSON with an exp field.
+// FIXED: Always read fresh token from localStorage
 function checkAuth() {
-  if (!token) {
+  const currentToken = localStorage.getItem('token');
+  
+  if (!currentToken) {
     window.location.href = '/login.html';
     return false;
   }
 
   try {
-    const payload = JSON.parse(atob(token));
+    const payload = JSON.parse(atob(currentToken));
     if (!payload.email || !payload.exp || Date.now() > payload.exp) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login.html';
       return false;
     }
+    // Update global token for API calls
+    token = currentToken;
     return true;
   } catch (e) {
-    // Token is malformed
+    console.error('Token validation error:', e);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = '/login.html';
@@ -34,6 +36,7 @@ function checkAuth() {
   }
 }
 
+// All other functions remain the same...
 // Load orders from API
 async function loadOrders() {
   try {

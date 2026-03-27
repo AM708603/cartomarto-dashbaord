@@ -39,7 +39,7 @@
   .badge-Delivered { background:#d1fae5; color:#065f46; }
   .badge-RTO       { background:#fee2e2; color:#991b1b; }
   .badge-Cancelled { background:#f1f5f9; color:#475569; }
-  .btn { padding:8px 16px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+  .btn { padding:8px 16px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:none; transition:all .15s; display:inline-flex; align-items:center; gap:6px; }
   .btn-primary { background:var(--primary); color:#fff; }
   .btn-primary:hover { background:#2563eb; }
   .btn-outline { background:#fff; color:var(--text); border:1.5px solid var(--border); }
@@ -65,6 +65,21 @@
   #toast.show { transform:translateY(0); opacity:1; }
   #toast.success { border-left:4px solid #22c55e; }
   #toast.error { border-left:4px solid #ef4444; }
+  
+  /* Product grid styles */
+  .product-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-top:16px; }
+  .product-card { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:all .2s; }
+  .product-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.1); border-color:var(--primary); }
+  .product-image { height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; }
+  .product-info { padding:12px; }
+  .product-title { font-weight:600; font-size:14px; margin-bottom:4px; }
+  .product-price { color:var(--primary); font-weight:700; font-size:14px; }
+  .cart-items { max-height:400px; overflow-y:auto; }
+  .cart-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border); }
+  .empty-cart { text-align:center; padding:40px; color:var(--muted); }
+  .order-summary { background:#f8fafc; border-radius:12px; padding:16px; margin-top:16px; }
+  .summary-row { display:flex; justify-content:space-between; padding:8px 0; }
+  .summary-row.total { border-top:2px solid var(--border); margin-top:8px; padding-top:12px; font-weight:700; font-size:16px; }
 </style>
 </head>
 <body>
@@ -72,7 +87,7 @@
 <aside id="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
     </div>
     <span style="color:#fff;font-size:18px;font-weight:700">CartoMarto</span>
   </div>
@@ -80,19 +95,19 @@
   <div class="sidebar-section">
     <div class="sidebar-section-label">Main</div>
     <button class="nav-item active" onclick="showSection('orders',this)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
       My Orders
     </button>
     <button class="nav-item" onclick="showSection('place-order',this)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
       Place Order
     </button>
     <button class="nav-item" onclick="showSection('products',this)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
       Products
     </button>
     <button class="nav-item" onclick="showSection('rto',this)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
       RTO Follow-up
     </button>
   </div>
@@ -106,7 +121,7 @@
       </div>
     </div>
     <button onclick="logout()" class="nav-item" style="color:#ef4444;margin-top:4px">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
       Logout
     </button>
   </div>
@@ -126,10 +141,10 @@
     <!-- ══ ORDERS ══ -->
     <div class="page-section active" id="section-orders">
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-total">0</div><div class="stat-label">Total Orders</div></div><div class="stat-icon" style="background:#eff6ff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg></div></div></div>
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-delivered">0</div><div class="stat-label">Delivered</div></div><div class="stat-icon" style="background:#f0fdf4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div></div>
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-pending">0</div><div class="stat-label">Pending</div></div><div class="stat-icon" style="background:#fefce8"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div></div>
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-rto">0</div><div class="stat-label">RTO</div></div><div class="stat-icon" style="background:#fef2f2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-total">0</div><div class="stat-label">Total Orders</div></div><div class="stat-icon" style="background:#eff6ff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-delivered">0</div><div class="stat-label">Delivered</div></div><div class="stat-icon" style="background:#f0fdf4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e"><polyline points="20 6 9 17 4 12"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-pending">0</div><div class="stat-label">Pending</div></div><div class="stat-icon" style="background:#fefce8"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#eab308"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-rto">0</div><div class="stat-label">RTO</div></div><div class="stat-icon" style="background:#fef2f2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div></div></div>
       </div>
 
       <div class="card">
@@ -137,57 +152,104 @@
           <div class="tabs">
             <button class="tab active" onclick="filterTab('',this)">All</button>
             <button class="tab" onclick="filterTab('pending',this)">Pending</button>
-            <button class="tab" onclick="filterTab('dispatched',this)">Dispatched</button>
+            <button class="tab" onclick="filterTab('fulfilled',this)">Fulfilled</button>
             <button class="tab" onclick="filterTab('delivered',this)">Delivered</button>
-            <button class="tab" onclick="filterTab('rto',this)">RTO</button>
+            <button class="tab" onclick="filterTab('cancelled',this)">Cancelled</button>
           </div>
           <input type="text" id="orderSearch" class="form-control" placeholder="Search..." oninput="renderOrders()" style="width:200px;padding:8px 12px" />
         </div>
         <div style="overflow-x:auto">
           <table>
-            <thead> transduction<th>Order ID</th><th>Customer</th><th>Phone</th><th>Platform</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></thead>
-            <tbody id="ordersBody"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Loading orders...</td></tr>
-           </table>
+            <thead>
+              <tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Platform</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ordersBody">
+              <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">Loading orders...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
     <!-- ══ PLACE ORDER ══ -->
     <div class="page-section" id="section-place-order">
-      <div class="card" style="max-width:750px">
-        <div style="padding:20px 24px;border-bottom:1px solid var(--border)">
-          <h2 style="font-size:16px;font-weight:700">Place New Order</h2>
-        </div>
-        <form id="orderForm" onsubmit="submitOrder(event)" style="padding:24px">
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Customer Name *</label><input type="text" id="oName" class="form-control" placeholder="Muhammad Ali" required /></div>
-            <div class="form-group"><label class="form-label">Phone *</label><input type="text" id="oPhone" class="form-control" placeholder="+971501234567" required /></div>
-          </div>
-          <div class="form-group"><label class="form-label">Delivery Address *</label><textarea id="oAddress" class="form-control" rows="2" placeholder="House #, Street, Area, City" required></textarea></div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Platform *</label>
-              <select id="oPlatform" class="form-control" required>
-                <option value="">Select Platform</option>
-                <option>CCWA</option><option>CCFB</option><option>CGWA</option>
-                <option>CGFB</option><option>WWDWA</option><option>WWDFB</option>
-                <option>TSDFB</option><option>AiSensy</option>
-              </select>
+      <div style="display:grid;grid-template-columns:1fr 400px;gap:24px">
+        <!-- Products Panel -->
+        <div class="card">
+          <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:16px;font-weight:700">Products</h3>
+            <div style="display:flex;gap:10px;margin-top:8px">
+              <input type="text" id="productSearchInput" class="form-control" placeholder="Search products..." style="width:200px" oninput="loadProducts(this.value)">
+              <button onclick="openProductModal()" class="btn btn-primary btn-sm">+ Add Product</button>
             </div>
           </div>
-
-          <div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Products</div>
-          <div id="orderItems"></div>
-          <button type="button" onclick="addProductRow()" class="btn btn-outline btn-sm" style="margin-bottom:20px">+ Add Product</button>
-
-          <div class="form-group"><label class="form-label">Total Price (AED) *</label><input type="number" id="oTotal" class="form-control" placeholder="2500" min="0" step="0.01" required /></div>
-          <div class="form-group"><label class="form-label">Notes</label><textarea id="oNotes" class="form-control" rows="2" placeholder="Size, color, special instructions..."></textarea></div>
-
-          <div style="display:flex;gap:12px;justify-content:flex-end">
-            <button type="button" onclick="showSection('orders',null)" class="btn btn-outline">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="submitOrderBtn">Place Order</button>
+          <div style="padding:20px">
+            <div class="product-grid" id="productGrid"></div>
+            <div id="noProductsMsg" class="empty-cart" style="display:none">No products found</div>
           </div>
-        </form>
+        </div>
+
+        <!-- Order Builder Panel -->
+        <div class="card">
+          <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:16px;font-weight:700">Order Builder</h3>
+          </div>
+          <div style="padding:20px">
+            <div style="margin-bottom:20px">
+              <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Cart Items</h4>
+              <div id="cartItems" class="cart-items"></div>
+              <div id="emptyCartMsg" class="empty-cart">No items in cart</div>
+            </div>
+
+            <div class="order-summary">
+              <div class="summary-row"><span>Subtotal</span><span id="subtotal">AED 0.00</span></div>
+              <div class="summary-row"><span>Shipping</span><span id="shipping">AED 15.00</span></div>
+              <div class="summary-row total"><span>Total</span><span id="totalAmount">AED 15.00</span></div>
+            </div>
+
+            <div style="margin-top:20px">
+              <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Customer Details</h4>
+              <div class="form-group">
+                <label class="form-label">Customer Name *</label>
+                <input type="text" id="customerName" class="form-control" placeholder="Full name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone *</label>
+                <div class="form-row" style="gap:8px">
+                  <select id="countryCode" class="form-control" style="width:100px">
+                    <option value="+971">+971 (UAE)</option>
+                    <option value="+92">+92 (PK)</option>
+                    <option value="+91">+91 (IN)</option>
+                  </select>
+                  <input type="text" id="customerPhone" class="form-control" placeholder="501234567">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Delivery Address *</label>
+                <textarea id="deliveryAddress" class="form-control" rows="2" placeholder="Complete address"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Platform *</label>
+                <select id="orderPlatform" class="form-control">
+                  <option value="">Select Platform</option>
+                  <option>CCWA</option><option>CCFB</option><option>CGWA</option>
+                  <option>CGFB</option><option>WWDWA</option><option>WWDFB</option>
+                  <option>TSDFB</option><option>AiSensy</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea id="orderNotes" class="form-control" rows="2" placeholder="Special instructions"></textarea>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:20px">
+              <button onclick="clearCart()" class="btn btn-outline" style="flex:1">Clear Cart</button>
+              <button onclick="submitOrder()" class="btn btn-primary" style="flex:1">Create Order</button>
+            </div>
+            <div id="orderResult" style="margin-top:12px;font-size:13px"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -198,10 +260,14 @@
       </div>
       <div class="card">
         <div style="overflow-x:auto">
-           <table>
-            <thead> transduction<th>Title</th><th>SKU</th><th>Price (AED)</th><th>Stock</th><th>Actions</th> </thead>
-            <tbody id="productsBody"> <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Loading products...</td></tr> </tbody>
-           </table>
+          <table>
+            <thead>
+              <tr><th>Title</th><th>SKU</th><th>Price (AED)</th><th>Stock</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="productsBody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Loading products...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -248,12 +314,12 @@
       <div class="modal-body">
         <input type="hidden" id="pId" />
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Title *</label><input type="text" id="pTitle" class="form-control" placeholder="Men's T-Shirt" required /></div>
-          <div class="form-group"><label class="form-label">SKU *</label><input type="text" id="pSku" class="form-control" placeholder="TSH-001" required /></div>
+          <div class="form-group"><label class="form-label">Title *</label><input type="text" id="pTitle" class="form-control" placeholder="Product name" required /></div>
+          <div class="form-group"><label class="form-label">SKU *</label><input type="text" id="pSku" class="form-control" placeholder="SKU-001" required /></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Price (AED) *</label><input type="number" id="pPrice" class="form-control" placeholder="850" min="0" step="0.01" required /></div>
-          <div class="form-group"><label class="form-label">Stock *</label><input type="number" id="pStock" class="form-control" placeholder="100" min="0" required /></div>
+          <div class="form-group"><label class="form-label">Price (AED) *</label><input type="number" id="pPrice" class="form-control" placeholder="0.00" min="0" step="0.01" required /></div>
+          <div class="form-group"><label class="form-label">Stock *</label><input type="number" id="pStock" class="form-control" placeholder="0" min="0" required /></div>
         </div>
         <div class="form-group"><label class="form-label">Description</label><textarea id="pDesc" class="form-control" rows="2" placeholder="Brief product description"></textarea></div>
       </div>
@@ -303,6 +369,7 @@ const API_URL = 'https://cartomarto-api.borntow2.workers.dev';
 let currentUser = null, token = null;
 let allOrders = [], allProducts = [], allRto = [];
 let filterStatus = '', editingOrderId = null;
+let cart = [];
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -332,6 +399,7 @@ window.addEventListener('DOMContentLoaded', () => {
   fetchStats();
   fetchOrders();
   fetchProducts();
+  loadProducts();
 });
 
 // ── API ───────────────────────────────────────────────────────────────────
@@ -371,6 +439,7 @@ function showSection(name, btn) {
   document.getElementById('pageTitle').textContent = titles[name] || name;
   if (btn) btn.classList.add('active');
   if (name === 'rto') fetchRto();
+  if (name === 'place-order') loadProducts();
 }
 
 function logout() { 
@@ -436,7 +505,7 @@ function renderOrders() {
       <td style="color:var(--muted);font-size:13px">${new Date(o.created_at).toLocaleDateString()}</td>
       <td><button onclick="openOrderDetail('${o.id}')" class="btn btn-outline btn-sm">View</button></td>
     </tr>
-  `).join('') : `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">No orders found</td></tr>`;
+  `).join('') : '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">No orders found</td></tr>';
 }
 
 function openOrderDetail(id) {
@@ -494,71 +563,139 @@ async function saveOrderUpdate() {
   }
 }
 
-// ── PLACE ORDER ────────────────────────────────────────────────────────────
-function addProductRow() {
-  const row = document.createElement('div');
-  row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr auto;gap:12px;align-items:end;margin-bottom:12px';
-  row.innerHTML = `
-    <div class="form-group" style="margin-bottom:0"><label class="form-label">Product Name</label><input type="text" class="form-control p-title" placeholder="Product name" /></div>
-    <div class="form-group" style="margin-bottom:0"><label class="form-label">Price (AED)</label><input type="number" class="form-control p-price" placeholder="0" min="0" step="0.01" oninput="recalcTotal()" /></div>
-    <button type="button" onclick="this.parentElement.remove();recalcTotal()" class="btn btn-danger btn-sm" style="height:40px">✕</button>
-  `;
-  document.getElementById('orderItems').appendChild(row);
-}
-
-function recalcTotal() {
-  let total = 0;
-  document.querySelectorAll('.p-price').forEach(el => { total += parseFloat(el.value || 0); });
-  document.getElementById('oTotal').value = total || '';
-}
-
-async function submitOrder(e) {
-  e.preventDefault();
-  const products = [];
-  document.querySelectorAll('#orderItems > div').forEach(row => {
-    const title = row.querySelector('.p-title')?.value?.trim();
-    const price = parseFloat(row.querySelector('.p-price')?.value || 0);
-    if (title && price > 0) products.push({ title, price, quantity: 1 });
-  });
-
-  const btn = document.getElementById('submitOrderBtn');
-  btn.disabled = true; 
-  btn.textContent = 'Placing...';
-
-  const orderData = {
-    order_number: `ORD-${Date.now()}`,
-    customer_name: document.getElementById('oName').value,
-    customer_phone: document.getElementById('oPhone').value,
-    delivery_address: document.getElementById('oAddress').value,
-    platform: document.getElementById('oPlatform').value,
-    total_price: parseFloat(document.getElementById('oTotal').value) || 0,
-    status: 'pending',
-    csr: currentUser.email,
-    notes: document.getElementById('oNotes').value,
-    products: products
-  };
-
-  const data = await api('/api/orders', {
-    method: 'POST',
-    body: JSON.stringify(orderData)
-  });
-
-  btn.disabled = false; 
-  btn.textContent = 'Place Order';
-
-  if (data?.success) {
-    document.getElementById('orderForm').reset();
-    document.getElementById('orderItems').innerHTML = '';
-    toast('Order placed successfully!');
-    fetchOrders(); 
-    fetchStats();
-    showSection('orders', document.querySelector('.nav-item'));
-  } else { 
-    toast('Failed to place order', 'error'); 
+// ── PRODUCTS & CART ─────────────────────────────────────────────────────────
+async function loadProducts(search = '') {
+  const data = await api(`/api/products${search ? `?query=${encodeURIComponent(search)}` : ''}`);
+  if (data?.products) { 
+    allProducts = data.products; 
+    renderProductGrid(); 
   }
 }
 
-// ── PRODUCTS ───────────────────────────────────────────────────────────────
+function renderProductGrid() {
+  const grid = document.getElementById('productGrid');
+  const noProductsMsg = document.getElementById('noProductsMsg');
+  if (!grid) return;
+  
+  if (!allProducts.length) { 
+    grid.innerHTML = ''; 
+    if (noProductsMsg) noProductsMsg.style.display = 'block';
+    return; 
+  }
+  if (noProductsMsg) noProductsMsg.style.display = 'none';
+  
+  grid.innerHTML = allProducts.map(p => `
+    <div class="product-card" onclick="addToCart('${p.id}', '${p.title}', ${p.price})">
+      <div class="product-image">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <div class="product-info">
+        <div class="product-title">${p.title}</div>
+        <div class="product-price">AED ${Number(p.price).toFixed(2)}</div>
+        <div class="product-stock" style="font-size:12px;color:var(--muted);margin-top:4px">Stock: ${p.stock_quantity || 0}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(id, title, price) {
+  const existing = cart.find(item => item.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ id, title, price, qty: 1 });
+  updateCartDisplay();
+}
+
+function updateCartDisplay() {
+  const cartDiv = document.getElementById('cartItems');
+  const emptyMsg = document.getElementById('emptyCartMsg');
+  let subtotal = 0;
+  
+  if (!cart.length) { 
+    cartDiv.innerHTML = ''; 
+    if (emptyMsg) emptyMsg.style.display = 'block';
+    subtotal = 0;
+  } else {
+    if (emptyMsg) emptyMsg.style.display = 'none';
+    cartDiv.innerHTML = cart.map((item, i) => `
+      <div class="cart-item">
+        <div><strong>${item.title}</strong><br><span style="font-size:12px;color:var(--muted)">AED ${item.price}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" value="${item.qty}" min="1" max="99" style="width:60px;padding:4px;border:1px solid var(--border);border-radius:6px" onchange="updateQty(${i}, this.value)">
+          <button class="btn btn-danger btn-sm" onclick="removeFromCart(${i})">✕</button>
+        </div>
+      </div>
+    `).join('');
+    subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  }
+  const shipping = 15;
+  const total = subtotal + shipping;
+  document.getElementById('subtotal').textContent = `AED ${subtotal.toFixed(2)}`;
+  document.getElementById('totalAmount').textContent = `AED ${total.toFixed(2)}`;
+}
+
+function updateQty(index, qty) { 
+  cart[index].qty = Math.max(1, parseInt(qty) || 1); 
+  updateCartDisplay(); 
+}
+
+function removeFromCart(index) { 
+  cart.splice(index, 1); 
+  updateCartDisplay(); 
+}
+
+function clearCart() { 
+  cart = []; 
+  updateCartDisplay(); 
+}
+
+async function submitOrder() {
+  const name = document.getElementById('customerName').value.trim();
+  const phone = document.getElementById('customerPhone').value.trim();
+  const address = document.getElementById('deliveryAddress').value.trim();
+  const platform = document.getElementById('orderPlatform').value;
+  
+  if (!name || !phone || !address || !platform) {
+    document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Please fill all required fields</span>';
+    return;
+  }
+  if (!cart.length) {
+    document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Cart is empty</span>';
+    return;
+  }
+  
+  const orderData = {
+    order_number: `ORD-${Date.now()}`,
+    customer_name: name,
+    customer_phone: document.getElementById('countryCode').value + phone,
+    delivery_address: address,
+    platform: platform,
+    total_price: cart.reduce((sum, item) => sum + (item.price * item.qty), 0) + 15,
+    status: 'pending',
+    csr: currentUser.email,
+    notes: document.getElementById('orderNotes').value,
+    products: cart.map(item => ({ title: item.title, price: item.price, quantity: item.qty }))
+  };
+  
+  const data = await api('/api/orders', { method: 'POST', body: JSON.stringify(orderData) });
+  if (data?.success) {
+    toast('Order created successfully');
+    clearCart();
+    document.getElementById('customerName').value = '';
+    document.getElementById('customerPhone').value = '';
+    document.getElementById('deliveryAddress').value = '';
+    document.getElementById('orderPlatform').value = '';
+    document.getElementById('orderNotes').value = '';
+    document.getElementById('orderResult').innerHTML = '<span style="color:#22c55e">Order created successfully!</span>';
+    setTimeout(() => document.getElementById('orderResult').innerHTML = '', 3000);
+    fetchOrders();
+    fetchStats();
+    showSection('orders', document.querySelector('.nav-item'));
+  } else {
+    document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Failed to create order</span>';
+  }
+}
+
+// ── PRODUCTS MANAGEMENT ─────────────────────────────────────────────────────
 async function fetchProducts() {
   const data = await api('/api/products');
   allProducts = data?.products || [];
@@ -578,7 +715,7 @@ function renderProducts() {
         <button onclick="deleteProduct('${p.id}')" class="btn btn-danger btn-sm">Del</button>
       </td>
     </tr>
-  `).join('') : ` <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No products yet. Click "Add Product" to start.</td></tr>`;
+  `).join('') : '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No products yet. Click "Add Product" to start.</td></tr>';
 }
 
 function openProductModal() {
@@ -621,6 +758,7 @@ async function saveProduct(e) {
 
   if (data?.success || data?.id) {
     fetchProducts();
+    loadProducts();
     closeModal('productModal');
     toast(id ? 'Product updated' : 'Product added');
   } else { 
@@ -633,6 +771,7 @@ async function deleteProduct(id) {
   const data = await api(`/api/products/${id}`, { method: 'DELETE' });
   if (data?.success) { 
     fetchProducts(); 
+    loadProducts();
     toast('Product deleted'); 
   }
 }

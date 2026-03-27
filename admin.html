@@ -15,7 +15,7 @@
     --border:#e2e8f0; --primary:#3b82f6;
   }
   body { background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
-  #sidebar { width:240px; background:var(--sidebar); min-height:100vh; position:fixed; top:0; left:0; display:flex; flex-direction:column; z-index:100; overflow-y:auto; }
+  #sidebar { width:260px; background:var(--sidebar); min-height:100vh; position:fixed; top:0; left:0; display:flex; flex-direction:column; z-index:100; overflow-y:auto; }
   .sidebar-logo { padding:22px 20px 18px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,.06); }
   .sidebar-logo-icon { width:34px; height:34px; border-radius:9px; background:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .sidebar-logo-text { color:#fff; font-size:17px; font-weight:700; }
@@ -26,7 +26,7 @@
   .nav-item.active { background:rgba(59,130,246,.2); color:#60a5fa; }
   .sidebar-footer { margin-top:auto; padding:14px 12px; border-top:1px solid rgba(255,255,255,.06); }
   .avatar { width:34px; height:34px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700; flex-shrink:0; }
-  #main { margin-left:240px; flex:1; display:flex; flex-direction:column; }
+  #main { margin-left:260px; flex:1; display:flex; flex-direction:column; }
   .topbar { background:#fff; border-bottom:1px solid var(--border); padding:0 28px; height:58px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
   .page-content { padding:24px; }
   .card { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
@@ -44,7 +44,7 @@
   .progress-fill { height:100%; border-radius:4px; }
   .page-section { display:none; }
   .page-section.active { display:block; }
-  .btn { padding:7px 14px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+  .btn { padding:7px 14px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all .15s; display:inline-flex; align-items:center; gap:6px; }
   .btn-primary { background:var(--primary); color:#fff; }
   .btn-primary:hover { background:#2563eb; }
   .btn-outline { background:#fff; color:var(--text); border:1.5px solid var(--border); }
@@ -70,6 +70,21 @@
   .role-admin { background:#fef9c3; color:#854d0e; }
   .role-manager { background:#dbeafe; color:#1d4ed8; }
   .role-csr { background:#f0fdf4; color:#15803d; }
+  
+  /* Product grid styles */
+  .product-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-top:16px; }
+  .product-card { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:all .2s; }
+  .product-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.1); border-color:var(--primary); }
+  .product-image { height:140px; background:#f8fafc; display:flex; align-items:center; justify-content:center; }
+  .product-info { padding:12px; }
+  .product-title { font-weight:600; font-size:14px; margin-bottom:4px; }
+  .product-price { color:var(--primary); font-weight:700; font-size:14px; }
+  .cart-items { max-height:300px; overflow-y:auto; }
+  .cart-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border); }
+  .empty-cart { text-align:center; padding:40px; color:var(--muted); }
+  .order-summary { background:#f8fafc; border-radius:12px; padding:16px; margin-top:16px; }
+  .summary-row { display:flex; justify-content:space-between; padding:8px 0; }
+  .summary-row.total { border-top:2px solid var(--border); margin-top:8px; padding-top:12px; font-weight:700; font-size:16px; }
 </style>
 </head>
 <body>
@@ -77,43 +92,55 @@
 <aside id="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-icon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
     </div>
-    <span class="sidebar-logo-text">CartoMarto</span>
+    <span class="sidebar-logo-text">CartoMarto Admin</span>
   </div>
 
   <div class="sidebar-section">
     <div class="sidebar-section-label">Analytics</div>
     <button class="nav-item active" onclick="showSection('overview',this)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
       Sales Overview
     </button>
     <button class="nav-item" onclick="showSection('products-analytics',this)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
       Top Products
     </button>
     <button class="nav-item" onclick="showSection('platform',this)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       Platform Breakdown
     </button>
     <button class="nav-item" onclick="showSection('csr',this)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
       CSR Performance
     </button>
     <button class="nav-item" onclick="showSection('rto',this)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
       RTO Status
     </button>
   </div>
 
   <div class="sidebar-section">
-    <div class="sidebar-section-label">Management</div>
+    <div class="sidebar-section-label">Operations</div>
     <button class="nav-item" onclick="showSection('orders',this)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
       All Orders
     </button>
+    <button class="nav-item" onclick="showSection('create-order',this)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+      Create Order
+    </button>
+    <button class="nav-item" onclick="showSection('add-product',this)">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4.5L15 4H9L8.5 7H4"/><path d="M4 7v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/><circle cx="12" cy="13" r="3"/></svg>
+      Add Product
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Management</div>
     <button class="nav-item" onclick="showSection('users',this)">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
       User Roles
     </button>
   </div>
@@ -127,7 +154,7 @@
       </div>
     </div>
     <button onclick="logout()" class="nav-item" style="color:#ef4444;margin-top:4px">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
       Logout
     </button>
   </div>
@@ -144,14 +171,14 @@
 
   <div class="page-content">
 
-    <!-- ══ OVERVIEW ══ -->
+    <!-- ══ SALES OVERVIEW ══ -->
     <div class="page-section active" id="section-overview">
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px">
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-total">0</div><div class="stat-label">Total Orders</div></div><div class="stat-icon" style="background:#eff6ff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg></div></div></div>
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-revenue">AED 0</div><div class="stat-label">Revenue</div></div><div class="stat-icon" style="background:#f0fdf4"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div></div>
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-delivered">0</div><div class="stat-label">Delivered</div></div><div class="stat-icon" style="background:#f0fdf4"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div></div>
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-delivery-rate">0%</div><div class="stat-label">Delivery Rate</div></div><div class="stat-icon" style="background:#eff6ff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div></div></div>
-        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-rto">0</div><div class="stat-label">RTO Orders</div></div><div class="stat-icon" style="background:#fef2f2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-total">0</div><div class="stat-label">Total Orders</div></div><div class="stat-icon" style="background:#eff6ff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-revenue">AED 0</div><div class="stat-label">Revenue</div></div><div class="stat-icon" style="background:#f0fdf4"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-delivered">0</div><div class="stat-label">Delivered</div></div><div class="stat-icon" style="background:#f0fdf4"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-delivery-rate">0%</div><div class="stat-label">Delivery Rate</div></div><div class="stat-icon" style="background:#eff6ff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div></div></div>
+        <div class="card stat-card"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="stat-value" id="s-rto">0</div><div class="stat-label">RTO Orders</div></div><div class="stat-icon" style="background:#fef2f2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div></div></div>
       </div>
 
       <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
@@ -171,10 +198,10 @@
       <div class="card" style="padding:18px">
         <div style="font-size:14px;font-weight:700;margin-bottom:14px">Top Products by Revenue</div>
         <div style="overflow-x:auto">
-           <table>
-            <thead> <th>#</th><th>Product</th><th>Units Sold</th><th>Revenue</th> </thead>
-            <tbody id="topProductsBody"> <td colspan="4" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td> </tbody>
-           </table>
+          <table>
+            <thead><tr><th>#</th><th>Product</th><th>Units Sold</th><th>Revenue</th></tr></thead>
+            <tbody id="topProductsBody"><tr><td colspan="4" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -189,10 +216,10 @@
         <div class="card">
           <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700">Platform Details</div>
           <div style="overflow-x:auto">
-             <table>
-              <thead> <th>Platform</th><th>Orders</th><th>Revenue</th><th>Share</th> </thead>
-              <tbody id="platformBody"> <td colspan="4" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td> </tbody>
-             </table>
+            <table>
+              <thead><tr><th>Platform</th><th>Orders</th><th>Revenue</th><th>Share</th></tr></thead>
+              <tbody id="platformBody"><tr><td colspan="4" style="text-align:center;padding:30px;color:var(--muted)">Loading...</td></tr></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -203,13 +230,12 @@
       <div class="card">
         <div style="padding:14px 18px;border-bottom:1px solid var(--border)">
           <div style="font-size:14px;font-weight:700">CSR Performance Report</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">Order metrics, delivery rates, and RTO analysis per CSR</div>
         </div>
         <div style="overflow-x:auto">
-           <table>
-            <thead> <th>CSR</th><th>Total</th><th>Delivered</th><th>RTO</th><th>Delivery Rate</th><th>Avg Value</th> </thead>
-            <tbody id="csrBody"> <td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Loading...</td> </tbody>
-           </table>
+          <table>
+            <thead><tr><th>CSR</th><th>Total</th><th>Delivered</th><th>RTO</th><th>Delivery Rate</th><th>Avg Value</th></tr></thead>
+            <tbody id="csrBody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Loading...</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -255,12 +281,148 @@
           <input type="text" id="searchOrder" class="form-control" placeholder="Search..." oninput="applyOrderFilters()" style="width:180px;padding:7px 12px" />
         </div>
         <div style="overflow-x:auto">
-           <table>
-            <thead> <th>Order #</th><th>Customer</th><th>Platform</th><th>CSR</th><th>Amount</th><th>Status</th><th>Date</th> </thead>
-            <tbody id="ordersBody"> <td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Loading...</td> </tbody>
-           </table>
+          <table>
+            <thead><tr><th>Order #</th><th>Customer</th><th>Platform</th><th>CSR</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="ordersBody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Loading...</td></tr></tbody>
+          </table>
         </div>
         <div id="ordersPagination" style="padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)"></div>
+      </div>
+    </div>
+
+    <!-- ══ CREATE ORDER PAGE ══ -->
+    <div class="page-section" id="section-create-order">
+      <div style="display:grid;grid-template-columns:1fr 400px;gap:24px">
+        <!-- Products Panel -->
+        <div class="card">
+          <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:16px;font-weight:700">Products</h3>
+            <div style="display:flex;gap:10px">
+              <div style="position:relative">
+                <input type="text" id="productSearch" class="form-control" placeholder="Search products..." style="width:200px" oninput="loadProducts(this.value)">
+              </div>
+              <button onclick="openAddProductModal()" class="btn btn-primary btn-sm">+ Add Product</button>
+            </div>
+          </div>
+          <div style="padding:20px">
+            <div class="product-grid" id="productGrid"></div>
+            <div id="noProductsMsg" class="empty-cart" style="display:none">No products found</div>
+          </div>
+        </div>
+
+        <!-- Order Builder Panel -->
+        <div class="card">
+          <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <h3 style="font-size:16px;font-weight:700">Order Builder</h3>
+          </div>
+          <div style="padding:20px">
+            <div style="margin-bottom:20px">
+              <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Cart Items</h4>
+              <div id="cartItems" class="cart-items"></div>
+              <div id="emptyCartMsg" class="empty-cart">No items in cart</div>
+            </div>
+
+            <div class="order-summary">
+              <div class="summary-row"><span>Subtotal</span><span id="subtotal">AED 0.00</span></div>
+              <div class="summary-row"><span>Shipping</span><span id="shipping">AED 15.00</span></div>
+              <div class="summary-row total"><span>Total</span><span id="totalAmount">AED 15.00</span></div>
+            </div>
+
+            <div style="margin-top:20px">
+              <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Customer Details</h4>
+              <div class="form-group">
+                <label class="form-label">Customer Name *</label>
+                <input type="text" id="customerName" class="form-control" placeholder="Full name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone *</label>
+                <div class="form-row" style="gap:8px">
+                  <select id="countryCode" class="form-control" style="width:100px">
+                    <option value="+971">+971 (UAE)</option>
+                    <option value="+92">+92 (PK)</option>
+                    <option value="+91">+91 (IN)</option>
+                  </select>
+                  <input type="text" id="customerPhone" class="form-control" placeholder="501234567">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Delivery Address *</label>
+                <textarea id="deliveryAddress" class="form-control" rows="2" placeholder="Complete address"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Platform *</label>
+                <select id="orderPlatform" class="form-control">
+                  <option value="">Select Platform</option>
+                  <option>CCWA</option><option>CCFB</option><option>CGWA</option>
+                  <option>CGFB</option><option>WWDWA</option><option>WWDFB</option>
+                  <option>TSDFB</option><option>AiSensy</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">CSR Name</label>
+                <input type="text" id="orderCsr" class="form-control" placeholder="Assigned CSR">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea id="orderNotes" class="form-control" rows="2" placeholder="Special instructions"></textarea>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:20px">
+              <button onclick="clearCart()" class="btn btn-outline" style="flex:1">Clear Cart</button>
+              <button onclick="submitOrder()" class="btn btn-primary" style="flex:1">Create Order</button>
+            </div>
+            <div id="orderResult" style="margin-top:12px;font-size:13px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ADD PRODUCT PAGE ══ -->
+    <div class="page-section" id="section-add-product">
+      <div class="card" style="max-width:600px;margin:0 auto">
+        <div class="card-header" style="padding:16px 20px;border-bottom:1px solid var(--border)">
+          <h3 style="font-size:16px;font-weight:700">Add New Product</h3>
+        </div>
+        <div style="padding:24px">
+          <div class="form-group">
+            <label class="form-label">Product Title *</label>
+            <input type="text" id="productTitle" class="form-control" placeholder="Product name">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">SKU *</label>
+              <input type="text" id="productSku" class="form-control" placeholder="SKU-001">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Price (AED) *</label>
+              <input type="number" id="productPrice" class="form-control" placeholder="0.00" step="0.01">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Stock Quantity *</label>
+              <input type="number" id="productStock" class="form-control" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <input type="text" id="productCategory" class="form-control" placeholder="Category">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="productDesc" class="form-control" rows="3" placeholder="Product description"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Product Image URL</label>
+            <input type="text" id="productImage" class="form-control" placeholder="https://example.com/image.jpg">
+          </div>
+          <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px">
+            <button onclick="clearProductForm()" class="btn btn-outline">Clear</button>
+            <button onclick="saveProduct()" class="btn btn-primary">Save Product</button>
+          </div>
+          <div id="productResult" style="margin-top:12px;font-size:13px"></div>
+        </div>
       </div>
     </div>
 
@@ -271,9 +433,9 @@
       </div>
       <div class="card">
         <div style="overflow-x:auto">
-           <table>
+          <table>
             <thead> <th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th> </thead>
-            <tbody id="usersBody"> <td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Loading...</td> </tbody>
+            <tbody id="usersBody"> <td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Loading... </tbody>
            </table>
         </div>
       </div>
@@ -282,64 +444,30 @@
   </div>
 </div>
 
-<!-- ══ CREATE USER MODAL ══ -->
+<!-- Modals -->
 <div id="userModal" class="modal-overlay" style="display:none">
   <div class="modal">
-    <div class="modal-header">
-      <h3 style="font-size:15px;font-weight:700" id="userModalTitle">Create User</h3>
-      <button onclick="closeModal('userModal')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px">✕</button>
-    </div>
+    <div class="modal-header"><h3 style="font-size:15px;font-weight:700" id="userModalTitle">Create User</h3><button onclick="closeModal('userModal')">✕</button></div>
     <form onsubmit="saveUser(event)">
       <div class="modal-body">
         <input type="hidden" id="uId" />
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Full Name *</label><input type="text" id="uName" class="form-control" placeholder="Ahmed Khan" required /></div>
-          <div class="form-group"><label class="form-label">Email *</label><input type="email" id="uEmail" class="form-control" placeholder="ahmed@cartomarto.com" required /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Role *</label>
-            <select id="uRole" class="form-control" required>
-              <option value="">Select Role</option>
-              <option value="csr">CSR</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-          <div class="form-group"><label class="form-label">Password *</label><input type="password" id="uPassword" class="form-control" placeholder="Minimum 6 characters" required /></div>
-        </div>
+        <div class="form-row"><div class="form-group"><label>Full Name *</label><input type="text" id="uName" class="form-control" required /></div><div class="form-group"><label>Email *</label><input type="email" id="uEmail" class="form-control" required /></div></div>
+        <div class="form-row"><div class="form-group"><label>Role *</label><select id="uRole" class="form-control"><option value="csr">CSR</option><option value="manager">Manager</option><option value="admin">Admin</option></select></div><div class="form-group"><label>Password *</label><input type="password" id="uPassword" class="form-control" placeholder="Min 6 chars" required /></div></div>
       </div>
-      <div class="modal-footer">
-        <button type="button" onclick="closeModal('userModal')" class="btn btn-outline">Cancel</button>
-        <button type="submit" class="btn btn-primary">Create User</button>
-      </div>
+      <div class="modal-footer"><button type="button" onclick="closeModal('userModal')" class="btn btn-outline">Cancel</button><button type="submit" class="btn btn-primary">Create</button></div>
     </form>
   </div>
 </div>
 
-<!-- ══ ASSIGN ROLE MODAL ══ -->
 <div id="roleModal" class="modal-overlay" style="display:none">
   <div class="modal" style="max-width:400px">
-    <div class="modal-header">
-      <h3 style="font-size:15px;font-weight:700">Assign Role</h3>
-      <button onclick="closeModal('roleModal')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px">✕</button>
-    </div>
+    <div class="modal-header"><h3 style="font-size:15px;font-weight:700">Assign Role</h3><button onclick="closeModal('roleModal')">✕</button></div>
     <div class="modal-body">
       <input type="hidden" id="roleUserId" />
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Assigning role to: <strong id="roleUserName" style="color:var(--text)"></strong></p>
-      <div class="form-group">
-        <label class="form-label">Select Role</label>
-        <select id="newRole" class="form-control">
-          <option value="csr">CSR</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
+      <p>Assigning role to: <strong id="roleUserName"></strong></p>
+      <div class="form-group"><label>Select Role</label><select id="newRole" class="form-control"><option value="csr">CSR</option><option value="manager">Manager</option><option value="admin">Admin</option></select></div>
     </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('roleModal')" class="btn btn-outline">Cancel</button>
-      <button onclick="saveRole()" class="btn btn-primary">Update Role</button>
-    </div>
+    <div class="modal-footer"><button onclick="closeModal('roleModal')" class="btn btn-outline">Cancel</button><button onclick="saveRole()" class="btn btn-primary">Update</button></div>
   </div>
 </div>
 
@@ -349,62 +477,39 @@
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 const API_URL = 'https://cartomarto-api.borntow2.workers.dev';
 let currentUser = null, token = null;
-let allOrders = [], allUsers = [];
+let allOrders = [], allUsers = [], allProducts = [];
+let cart = [];
 let charts = {};
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   token = localStorage.getItem('token');
   const userStr = localStorage.getItem('user');
-  
-  if (!token || !userStr) { 
-    window.location.href = 'login.html'; 
-    return; 
-  }
-  
+  if (!token || !userStr) { window.location.href = 'login.html'; return; }
   try {
     currentUser = JSON.parse(userStr);
-    if (currentUser.role !== 'admin') { 
-      window.location.href = 'manager.html'; 
-      return; 
-    }
-    const displayName = currentUser.email.split('@')[0];
-    document.getElementById('sidebarName').textContent = displayName;
-    document.getElementById('sidebarAvatar').textContent = displayName[0].toUpperCase();
-    document.getElementById('topbarName').textContent = displayName;
-  } catch (e) {
-    console.error('Error parsing user:', e);
-    localStorage.clear();
-    window.location.href = 'login.html';
-    return;
-  }
-
+    if (currentUser.role !== 'admin') { window.location.href = 'manager.html'; return; }
+    document.getElementById('sidebarName').textContent = currentUser.email.split('@')[0];
+    document.getElementById('sidebarAvatar').textContent = currentUser.email[0].toUpperCase();
+    document.getElementById('topbarName').textContent = currentUser.email.split('@')[0];
+  } catch (e) { localStorage.clear(); window.location.href = 'login.html'; return; }
   loadAll();
 });
 
-// ── API ───────────────────────────────────────────────────────────────────
 async function apiFetch(path, options = {}) {
   try {
     const res = await fetch(`${API_URL}${path}`, {
       ...options,
-      headers: { 
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
-      }
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(options.headers || {}) }
     });
     if (res.status === 401) { logout(); return null; }
     return res.json();
-  } catch (err) { 
-    console.error('API error:', err);
-    return null; 
-  }
+  } catch (err) { return null; }
 }
 
 function showToast(msg, type = 'success') {
   const el = document.getElementById('toast');
-  el.textContent = msg; 
-  el.className = `show ${type}`;
+  el.textContent = msg; el.className = `show ${type}`;
   setTimeout(() => el.className = '', 3000);
 }
 
@@ -413,63 +518,29 @@ function showSection(name, btn) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(`section-${name}`).classList.add('active');
   if (btn) btn.classList.add('active');
-  const titles = {
-    overview: 'Sales Overview', 'products-analytics': 'Top Products', platform: 'Platform Breakdown',
-    csr: 'CSR Performance', rto: 'RTO Status', orders: 'All Orders', users: 'User Management'
-  };
+  const titles = { overview: 'Sales Overview', 'products-analytics': 'Top Products', platform: 'Platform Breakdown', csr: 'CSR Performance', rto: 'RTO Status', orders: 'All Orders', 'create-order': 'Create Order', 'add-product': 'Add Product', users: 'User Management' };
   document.getElementById('pageTitle').textContent = titles[name] || name;
+  if (name === 'create-order') { loadProducts(); }
 }
 
-function logout() { 
-  localStorage.clear(); 
-  window.location.href = 'login.html'; 
-}
-
-function closeModal(id) { 
-  document.getElementById(id).style.display = 'none'; 
-}
-
-function destroyChart(id) { 
-  if (charts[id]) { 
-    charts[id].destroy(); 
-    delete charts[id]; 
-  } 
-}
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
 // ── LOAD ALL DATA ─────────────────────────────────────────────────────────
 async function loadAll() {
   try {
-    const [stats, orders, rtoRecords, users] = await Promise.all([
-      apiFetch('/api/stats'),
-      apiFetch('/api/orders'),
-      apiFetch('/api/rto'),
-      apiFetch('/api/users')
+    const [stats, orders, rtoRecords, users, products] = await Promise.all([
+      apiFetch('/api/stats'), apiFetch('/api/orders'), apiFetch('/api/rto'), apiFetch('/api/users'), apiFetch('/api/products')
     ]);
-    
     if (stats) renderStats(stats);
-    if (Array.isArray(orders)) {
-      allOrders = orders;
-      renderRevenueChart(orders);
-      renderStatusChart(orders);
-      renderPlatformStats(orders);
-      renderCsrStats(orders);
-      renderTopProducts(orders);
-      applyOrderFilters();
-    }
-    if (Array.isArray(rtoRecords)) {
-      renderRtoStats(rtoRecords);
-    }
-    if (users) {
-      allUsers = users;
-      renderUsers();
-    }
-  } catch (error) {
-    console.error('Error loading data:', error);
-    showToast('Failed to load dashboard data', 'error');
-  }
+    if (Array.isArray(orders)) { allOrders = orders; renderRevenueChart(orders); renderStatusChart(orders); renderPlatformStats(orders); renderCsrStats(orders); renderTopProducts(orders); applyOrderFilters(); }
+    if (Array.isArray(rtoRecords)) renderRtoStats(rtoRecords);
+    if (users) { allUsers = users; renderUsers(); }
+    if (products?.products) { allProducts = products.products; }
+  } catch (error) { showToast('Failed to load data', 'error'); }
 }
 
-// ── RENDER STATS ─────────────────────────────────────────────────────────
 function renderStats(stats) {
   document.getElementById('s-total').textContent = stats.totalOrders || 0;
   document.getElementById('s-revenue').textContent = `AED ${Number(stats.totalRevenue || 0).toLocaleString()}`;
@@ -478,369 +549,201 @@ function renderStats(stats) {
   document.getElementById('s-rto').textContent = stats.totalRTO || 0;
 }
 
-// ── REVENUE CHART ────────────────────────────────────────────────────────
 function renderRevenueChart(orders) {
   const last7Days = [];
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    last7Days.push(date.toISOString().split('T')[0]);
-  }
-  
-  const dailyRevenue = last7Days.map(date => {
-    const dayOrders = orders.filter(o => o.created_at?.startsWith(date));
-    return dayOrders.reduce((sum, o) => sum + (parseFloat(o.total_price) || 0), 0);
-  });
-  
+  for (let i = 6; i >= 0; i--) { const date = new Date(); date.setDate(date.getDate() - i); last7Days.push(date.toISOString().split('T')[0]); }
+  const dailyRevenue = last7Days.map(date => orders.filter(o => o.created_at?.startsWith(date)).reduce((sum, o) => sum + (parseFloat(o.total_price) || 0), 0));
   destroyChart('revenueChart');
   const ctx = document.getElementById('revenueChart').getContext('2d');
-  charts.revenueChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: last7Days.map(d => d.slice(5)),
-      datasets: [{
-        label: 'Revenue (AED)',
-        data: dailyRevenue,
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59,130,246,.1)',
-        tension: 0.4,
-        fill: true,
-        pointBackgroundColor: '#3b82f6',
-        pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, ticks: { callback: v => `AED ${v.toLocaleString()}` } } }
-    }
-  });
+  charts.revenueChart = new Chart(ctx, { type: 'line', data: { labels: last7Days.map(d => d.slice(5)), datasets: [{ label: 'Revenue (AED)', data: dailyRevenue, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)', tension: 0.4, fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
 }
 
-// ── STATUS CHART ─────────────────────────────────────────────────────────
 function renderStatusChart(orders) {
   const delivered = orders.filter(o => o.status === 'fulfilled' || o.status === 'delivered').length;
   const pending = orders.filter(o => o.status === 'pending').length;
   const rto = orders.filter(o => o.status === 'rto').length;
   const other = orders.length - delivered - pending - rto;
-  
   destroyChart('statusChart');
   const ctx = document.getElementById('statusChart').getContext('2d');
-  charts.statusChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Delivered', 'Pending', 'RTO', 'Other'],
-      datasets: [{
-        data: [delivered, pending, rto, other],
-        backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#94a3b8'],
-        borderWidth: 2,
-        borderColor: '#fff'
-      }]
-    },
-    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { padding: 12 } } } }
-  });
+  charts.statusChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Delivered', 'Pending', 'RTO', 'Other'], datasets: [{ data: [delivered, pending, rto, other], backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#94a3b8'] }] }, options: { responsive: true } });
 }
 
-// ── PLATFORM STATS ────────────────────────────────────────────────────────
 function renderPlatformStats(orders) {
-  const platformCount = {};
-  const platformRevenue = {};
-  orders.forEach(o => {
-    const platform = o.platform || 'Other';
-    platformCount[platform] = (platformCount[platform] || 0) + 1;
-    platformRevenue[platform] = (platformRevenue[platform] || 0) + (parseFloat(o.total_price) || 0);
-  });
-  
-  const platforms = Object.keys(platformCount);
-  const counts = Object.values(platformCount);
-  const revenues = Object.values(platformRevenue);
-  const total = orders.length;
-  
-  const tbody = document.getElementById('platformBody');
-  tbody.innerHTML = platforms.map((p, i) => {
-    const percentage = total > 0 ? Math.round((counts[i] / total) * 100) : 0;
-    return `
-      <tr>
-        <td style="font-weight:600">${p}</td>
-        <td>${counts[i]}</td>
-        <td style="font-weight:600">AED ${Number(revenues[i]).toLocaleString()}</td>
-        <td><div style="display:flex;align-items:center;gap:6px"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${percentage}%;background:#3b82f6"></div></div><span style="font-weight:700;font-size:12px;min-width:35px">${percentage}%</span></div></td>
-        </tr>
-    `;
-  }).join('') || '睦<td colspan="4" style="text-align:center;padding:30px;color:var(--muted)">No data</td></tr>';
-  
-  const colors = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+  const platformCount = {}, platformRevenue = {};
+  orders.forEach(o => { const p = o.platform || 'Other'; platformCount[p] = (platformCount[p] || 0) + 1; platformRevenue[p] = (platformRevenue[p] || 0) + (parseFloat(o.total_price) || 0); });
+  const platforms = Object.keys(platformCount), counts = Object.values(platformCount), revenues = Object.values(platformRevenue), total = orders.length;
+  document.getElementById('platformBody').innerHTML = platforms.map((p, i) => `<tr><td style="font-weight:600">${p}</td><td>${counts[i]}</td><td>AED ${Number(revenues[i]).toLocaleString()}</td><td>${total > 0 ? Math.round((counts[i] / total) * 100) : 0}%</td></tr>`).join('') || '<tr><td colspan="4">No data</td></tr>';
   destroyChart('platformChart');
   const ctx = document.getElementById('platformChart').getContext('2d');
-  charts.platformChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: platforms,
-      datasets: [{ data: counts, backgroundColor: colors.slice(0, platforms.length), borderWidth: 2, borderColor: '#fff' }]
-    },
-    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { padding: 12 } } } }
-  });
+  charts.platformChart = new Chart(ctx, { type: 'doughnut', data: { labels: platforms, datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6'] }] }, options: { responsive: true } });
 }
 
-// ── CSR STATS ────────────────────────────────────────────────────────────
 function renderCsrStats(orders) {
   const csrMap = {};
-  orders.forEach(o => {
-    const csr = o.csr || 'Unassigned';
-    if (!csrMap[csr]) {
-      csrMap[csr] = { total: 0, delivered: 0, totalValue: 0 };
-    }
-    csrMap[csr].total++;
-    csrMap[csr].totalValue += parseFloat(o.total_price) || 0;
-    if (o.status === 'fulfilled' || o.status === 'delivered') {
-      csrMap[csr].delivered++;
-    }
-  });
-  
-  const csrData = Object.entries(csrMap).map(([csr, data]) => ({
-    csr,
-    total_orders: data.total,
-    delivered: data.delivered,
-    rto: data.total - data.delivered,
-    delivery_rate: data.total > 0 ? Math.round((data.delivered / data.total) * 100) : 0,
-    avg_order_value: data.total > 0 ? data.totalValue / data.total : 0
-  })).sort((a, b) => b.delivery_rate - a.delivery_rate);
-  
-  const tbody = document.getElementById('csrBody');
-  tbody.innerHTML = csrData.length ? csrData.map(c => `
-    <tr>
-      <td style="font-weight:600">${c.csr}</td>
-      <td>${c.total_orders}</td>
-      <td style="color:#22c55e;font-weight:600">${c.delivered}</td>
-      <td style="color:#ef4444;font-weight:600">${c.rto}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="progress-bar"><div class="progress-fill" style="width:${c.delivery_rate}%;background:${c.delivery_rate >= 70 ? '#22c55e' : c.delivery_rate >= 50 ? '#f59e0b' : '#ef4444'}"></div></div>
-          <span style="font-weight:700;font-size:12px;min-width:38px">${c.delivery_rate}%</span>
-        </div>
-      </td>
-      <td style="font-weight:600">AED ${Number(c.avg_order_value).toLocaleString()}</td>
-     </tr>
-  `).join('') : '睦<td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">No CSR data</td></tr>';
+  orders.forEach(o => { const csr = o.csr || 'Unassigned'; if (!csrMap[csr]) csrMap[csr] = { total: 0, delivered: 0, totalValue: 0 }; csrMap[csr].total++; csrMap[csr].totalValue += parseFloat(o.total_price) || 0; if (o.status === 'fulfilled' || o.status === 'delivered') csrMap[csr].delivered++; });
+  const csrData = Object.entries(csrMap).map(([csr, data]) => ({ csr, total_orders: data.total, delivered: data.delivered, rto: data.total - data.delivered, delivery_rate: data.total > 0 ? Math.round((data.delivered / data.total) * 100) : 0, avg_order_value: data.total > 0 ? data.totalValue / data.total : 0 })).sort((a, b) => b.delivery_rate - a.delivery_rate);
+  document.getElementById('csrBody').innerHTML = csrData.map(c => `<tr><td>${c.csr}</td><td>${c.total_orders}</td><td style="color:#22c55e">${c.delivered}</td><td style="color:#ef4444">${c.rto}</td><td><div class="progress-bar"><div class="progress-fill" style="width:${c.delivery_rate}%;background:${c.delivery_rate >= 70 ? '#22c55e' : c.delivery_rate >= 50 ? '#f59e0b' : '#ef4444'}"></div></div> ${c.delivery_rate}%</td><td>AED ${Number(c.avg_order_value).toLocaleString()}</td></tr>`).join('') || '<tr><td colspan="6">No CSR data</td></tr>';
 }
 
-// ── TOP PRODUCTS ──────────────────────────────────────────────────────────
 function renderTopProducts(orders) {
   const productMap = new Map();
-  orders.forEach(o => {
-    try {
-      const products = typeof o.products === 'string' ? JSON.parse(o.products) : (o.products || []);
-      products.forEach(p => {
-        const name = p.title || p.name || 'Unknown';
-        const qty = p.quantity || p.qty || 1;
-        const price = p.price || 0;
-        if (!productMap.has(name)) {
-          productMap.set(name, { sold: 0, revenue: 0 });
-        }
-        const item = productMap.get(name);
-        item.sold += qty;
-        item.revenue += price * qty;
-      });
-    } catch (e) {}
-  });
-  
-  const topProducts = Array.from(productMap.entries())
-    .map(([name, data]) => ({ name, sold: data.sold, revenue: data.revenue }))
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 10);
-  
-  const tbody = document.getElementById('topProductsBody');
-  tbody.innerHTML = topProducts.length ? topProducts.map((p, i) => `
-    <tr>
-      <td style="font-weight:700;color:${i < 3 ? '#f59e0b' : 'var(--muted)'}">#${i + 1}</td>
-      <td style="font-weight:600">${p.name}</td>
-      <td>${p.sold}</td>
-      <td style="font-weight:700;color:#22c55e">AED ${Number(p.revenue).toLocaleString()}</td>
-     </tr>
-  `).join('') : '睦<td colspan="4" style="text-align:center;padding:30px;color:var(--muted)">No product data</td></tr>';
+  orders.forEach(o => { try { const products = typeof o.products === 'string' ? JSON.parse(o.products) : (o.products || []); products.forEach(p => { const name = p.title || p.name || 'Unknown', qty = p.quantity || p.qty || 1, price = p.price || 0; if (!productMap.has(name)) productMap.set(name, { sold: 0, revenue: 0 }); const item = productMap.get(name); item.sold += qty; item.revenue += price * qty; }); } catch (e) {} });
+  const topProducts = Array.from(productMap.entries()).map(([name, data]) => ({ name, sold: data.sold, revenue: data.revenue })).sort((a, b) => b.revenue - a.revenue).slice(0, 10);
+  document.getElementById('topProductsBody').innerHTML = topProducts.map((p, i) => `<tr><td style="font-weight:700;color:${i < 3 ? '#f59e0b' : 'var(--muted)'}">#${i+1}</td><td style="font-weight:600">${p.name}</td><td>${p.sold}</td><td style="color:#22c55e">AED ${Number(p.revenue).toLocaleString()}</td></tr>`).join('') || '<tr><td colspan="4">No product data</td></tr>';
 }
 
-// ── RTO STATS ─────────────────────────────────────────────────────────────
 function renderRtoStats(rtoRecords) {
-  const total = rtoRecords.length;
-  const pending = rtoRecords.filter(r => r.status === 'PLS FOLLOW UP ME' || r.status === 'Pending').length;
-  const resolved = rtoRecords.filter(r => r.status === 'DELIVERED' || r.status === 'Resolved').length;
-  const reDispatched = rtoRecords.filter(r => r.status === 'REPROCESS' || r.status === 'Re-Dispatched').length;
-  
+  const total = rtoRecords.length, pending = rtoRecords.filter(r => r.status === 'PLS FOLLOW UP ME').length, resolved = rtoRecords.filter(r => r.status === 'DELIVERED').length, reDispatched = rtoRecords.filter(r => r.status === 'REPROCESS').length;
   document.getElementById('rto-total').textContent = total;
   document.getElementById('rto-pending').textContent = pending;
   document.getElementById('rto-resolved').textContent = resolved;
   document.getElementById('rto-redispatched').textContent = reDispatched;
-  
-  document.getElementById('rtoSummaryText').innerHTML = `
-    <p>• <strong>Total RTO Rate:</strong> ${total > 0 ? Math.round((total / (allOrders.length || 1)) * 100) : 0}% of all orders</p>
-    <p>• <strong>Pending resolution:</strong> ${pending} cases require immediate attention</p>
-    <p>• <strong>Successfully resolved:</strong> ${resolved} cases closed</p>
-    <p>• <strong>Re-dispatched:</strong> ${reDispatched} successfully re-sent to customers</p>
-    <br/>
-    <p style="color:${total > (allOrders.length * 0.2) ? '#ef4444' : total > (allOrders.length * 0.1) ? '#f59e0b' : '#22c55e'};font-weight:600">
-      ${total > (allOrders.length * 0.2) ? '⚠️ High RTO rate — review courier partners and CSR quality' : total > (allOrders.length * 0.1) ? '⚡ RTO rate is moderate — monitor closely' : '✅ RTO rate is within healthy range'}
-    </p>
-  `;
-  
+  document.getElementById('rtoSummaryText').innerHTML = `<p>Total RTO Rate: ${total > 0 ? Math.round((total / (allOrders.length || 1)) * 100) : 0}%</p><p>Pending: ${pending}</p><p>Resolved: ${resolved}</p><p>Re-dispatched: ${reDispatched}</p>`;
   destroyChart('rtoChart');
   const ctx = document.getElementById('rtoChart').getContext('2d');
-  charts.rtoChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: ['Pending Follow-up', 'Resolved', 'Re-Dispatched'],
-      datasets: [{ data: [pending, resolved, reDispatched], backgroundColor: ['#fbbf24', '#22c55e', '#8b5cf6'], borderWidth: 2, borderColor: '#fff' }]
-    },
-    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-  });
+  charts.rtoChart = new Chart(ctx, { type: 'pie', data: { labels: ['Pending', 'Resolved', 'Re-Dispatched'], datasets: [{ data: [pending, resolved, reDispatched], backgroundColor: ['#fbbf24', '#22c55e', '#8b5cf6'] }] }, options: { responsive: true } });
 }
 
-// ── ORDERS FILTER ─────────────────────────────────────────────────────────
 function applyOrderFilters() {
-  const status = document.getElementById('filterStatus')?.value || '';
-  const platform = document.getElementById('filterPlatform')?.value || '';
-  const search = (document.getElementById('searchOrder')?.value || '').toLowerCase();
-  
+  const status = document.getElementById('filterStatus')?.value || '', platform = document.getElementById('filterPlatform')?.value || '', search = (document.getElementById('searchOrder')?.value || '').toLowerCase();
   let filtered = allOrders;
   if (status) filtered = filtered.filter(o => o.status === status);
   if (platform) filtered = filtered.filter(o => o.platform === platform);
-  if (search) {
-    filtered = filtered.filter(o =>
-      (o.order_number || '').toLowerCase().includes(search) ||
-      (o.customer_name || '').toLowerCase().includes(search) ||
-      (o.customer_phone || '').includes(search)
-    );
-  }
-  
-  const statusClasses = {
-    pending: 'background:#fef9c3;color:#854d0e',
-    fulfilled: 'background:#d1fae5;color:#065f46',
-    delivered: 'background:#d1fae5;color:#065f46',
-    cancelled: 'background:#fee2e2;color:#991b1b'
-  };
-  
-  const tbody = document.getElementById('ordersBody');
-  tbody.innerHTML = filtered.slice(0, 100).map(o => `
-    <tr>
-      <td style="font-weight:600;color:#1d4ed8">${o.order_number || o.id?.slice(-8)}</td>
-      <td>${o.customer_name || 'Guest'}</td>
-      <td><span style="background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${o.platform || '—'}</span></td>
-      <td style="color:var(--muted)">${o.csr || '—'}</td>
-      <td style="font-weight:600">AED ${Number(o.total_price || 0).toLocaleString()}</td>
-      <td><span class="badge" style="${statusClasses[o.status] || 'background:#fef9c3;color:#854d0e'}">${o.status || 'pending'}</span></td>
-      <td style="color:var(--muted);font-size:12px">${new Date(o.created_at).toLocaleDateString()}</td>
-     </tr>
-  `).join('') || '睦<td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">No orders found</td></tr>';
-  
+  if (search) filtered = filtered.filter(o => (o.order_number || '').toLowerCase().includes(search) || (o.customer_name || '').toLowerCase().includes(search));
+  const statusClasses = { pending: 'background:#fef9c3;color:#854d0e', fulfilled: 'background:#d1fae5;color:#065f46', delivered: 'background:#d1fae5;color:#065f46', cancelled: 'background:#fee2e2;color:#991b1b' };
+  document.getElementById('ordersBody').innerHTML = filtered.slice(0, 100).map(o => `<tr><td style="font-weight:600;color:#1d4ed8">${o.order_number || o.id?.slice(-8)}</td><td>${o.customer_name || 'Guest'}</td><td><span style="background:#f1f5f9;padding:2px 8px;border-radius:4px">${o.platform || '—'}</span></td><td>${o.csr || '—'}</td><td>AED ${Number(o.total_price || 0).toLocaleString()}</td><td><span class="badge" style="${statusClasses[o.status] || 'background:#fef9c3;color:#854d0e'}">${o.status || 'pending'}</span></td><td>${new Date(o.created_at).toLocaleDateString()}</td></tr>`).join('') || '<tr><td colspan="7">No orders found</td></tr>';
   document.getElementById('ordersPagination').textContent = `Showing ${Math.min(filtered.length, 100)} of ${filtered.length} orders`;
 }
 
-// ── USER MANAGEMENT FUNCTIONS ──────────────────────────────────────────────
-async function fetchUsers() {
-  const data = await apiFetch('/api/users');
-  if (data) {
-    allUsers = data;
-    renderUsers();
-  }
+// ── PRODUCT MANAGEMENT ──────────────────────────────────────────────────────
+async function loadProducts(search = '') {
+  const data = await apiFetch(`/api/products${search ? `?query=${encodeURIComponent(search)}` : ''}`);
+  if (data?.products) { allProducts = data.products; renderProductGrid(); }
 }
 
+function renderProductGrid() {
+  const grid = document.getElementById('productGrid');
+  if (!grid) return;
+  if (!allProducts.length) { grid.innerHTML = ''; document.getElementById('noProductsMsg').style.display = 'block'; return; }
+  document.getElementById('noProductsMsg').style.display = 'none';
+  grid.innerHTML = allProducts.map(p => `<div class="product-card" onclick="addToCart('${p.id}', '${p.title}', ${p.price})"><div class="product-image"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div class="product-info"><div class="product-title">${p.title}</div><div class="product-price">AED ${Number(p.price).toFixed(2)}</div></div></div>`).join('');
+}
+
+function addToCart(id, title, price) {
+  const existing = cart.find(item => item.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ id, title, price, qty: 1 });
+  updateCartDisplay();
+}
+
+function updateCartDisplay() {
+  const cartDiv = document.getElementById('cartItems');
+  const emptyMsg = document.getElementById('emptyCartMsg');
+  let subtotal = 0;
+  if (!cart.length) { cartDiv.innerHTML = ''; emptyMsg.style.display = 'block'; subtotal = 0; }
+  else {
+    emptyMsg.style.display = 'none';
+    cartDiv.innerHTML = cart.map((item, i) => `<div class="cart-item"><div><strong>${item.title}</strong><br><span style="font-size:12px;color:var(--muted)">AED ${item.price}</span></div><div style="display:flex;align-items:center;gap:8px"><input type="number" value="${item.qty}" min="1" max="99" style="width:60px;padding:4px;border:1px solid var(--border);border-radius:6px" onchange="updateQty(${i}, this.value)"><button class="btn btn-danger btn-xs" onclick="removeFromCart(${i})">✕</button></div></div>`).join('');
+    subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  }
+  const shipping = 15;
+  const total = subtotal + shipping;
+  document.getElementById('subtotal').textContent = `AED ${subtotal.toFixed(2)}`;
+  document.getElementById('totalAmount').textContent = `AED ${total.toFixed(2)}`;
+}
+
+function updateQty(index, qty) { cart[index].qty = Math.max(1, parseInt(qty) || 1); updateCartDisplay(); }
+function removeFromCart(index) { cart.splice(index, 1); updateCartDisplay(); }
+function clearCart() { cart = []; updateCartDisplay(); }
+
+async function submitOrder() {
+  const name = document.getElementById('customerName').value.trim();
+  const phone = document.getElementById('customerPhone').value.trim();
+  const address = document.getElementById('deliveryAddress').value.trim();
+  const platform = document.getElementById('orderPlatform').value;
+  if (!name || !phone || !address || !platform) { document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Please fill all required fields</span>'; return; }
+  if (!cart.length) { document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Cart is empty</span>'; return; }
+  const orderData = {
+    order_number: `ORD-${Date.now()}`,
+    customer_name: name,
+    customer_phone: document.getElementById('countryCode').value + phone,
+    delivery_address: address,
+    platform: platform,
+    total_price: cart.reduce((sum, item) => sum + (item.price * item.qty), 0) + 15,
+    status: 'pending',
+    csr: document.getElementById('orderCsr').value || currentUser.email,
+    notes: document.getElementById('orderNotes').value,
+    products: cart.map(item => ({ title: item.title, price: item.price, quantity: item.qty }))
+  };
+  const data = await apiFetch('/api/orders', { method: 'POST', body: JSON.stringify(orderData) });
+  if (data?.success) {
+    showToast('Order created successfully');
+    clearCart();
+    document.getElementById('customerName').value = '';
+    document.getElementById('customerPhone').value = '';
+    document.getElementById('deliveryAddress').value = '';
+    document.getElementById('orderPlatform').value = '';
+    document.getElementById('orderCsr').value = '';
+    document.getElementById('orderNotes').value = '';
+    document.getElementById('orderResult').innerHTML = '<span style="color:#22c55e">Order created successfully!</span>';
+    setTimeout(() => document.getElementById('orderResult').innerHTML = '', 3000);
+    loadAll();
+  } else { document.getElementById('orderResult').innerHTML = '<span style="color:#ef4444">Failed to create order</span>'; }
+}
+
+// ── ADD PRODUCT ─────────────────────────────────────────────────────────────
+function openAddProductModal() { showSection('add-product', null); }
+
+async function saveProduct() {
+  const title = document.getElementById('productTitle').value.trim();
+  const sku = document.getElementById('productSku').value.trim();
+  const price = parseFloat(document.getElementById('productPrice').value);
+  const stock = parseInt(document.getElementById('productStock').value);
+  if (!title || !sku || isNaN(price) || isNaN(stock)) { document.getElementById('productResult').innerHTML = '<span style="color:#ef4444">Please fill all required fields</span>'; return; }
+  const data = await apiFetch('/api/products', { method: 'POST', body: JSON.stringify({ title, sku, price, stock_quantity: stock, description: document.getElementById('productDesc').value }) });
+  if (data?.success) {
+    showToast('Product added successfully');
+    clearProductForm();
+    document.getElementById('productResult').innerHTML = '<span style="color:#22c55e">Product added successfully!</span>';
+    setTimeout(() => document.getElementById('productResult').innerHTML = '', 3000);
+    loadProducts();
+  } else { document.getElementById('productResult').innerHTML = '<span style="color:#ef4444">Failed to add product</span>'; }
+}
+
+function clearProductForm() {
+  document.getElementById('productTitle').value = '';
+  document.getElementById('productSku').value = '';
+  document.getElementById('productPrice').value = '';
+  document.getElementById('productStock').value = '';
+  document.getElementById('productDesc').value = '';
+  document.getElementById('productCategory').value = '';
+  document.getElementById('productImage').value = '';
+}
+
+// ── USER MANAGEMENT ─────────────────────────────────────────────────────────
 function renderUsers() {
   const tbody = document.getElementById('usersBody');
-  if (!tbody) return;
-  
-  tbody.innerHTML = allUsers.map(u => `
-    <tr>
-      <td style="font-weight:600">${u.name}</td>
-      <td style="color:var(--muted)">${u.email}</td>
-      <td><span class="badge role-${u.role}">${u.role.toUpperCase()}</span></td>
-      <td><span class="badge" style="${u.is_active ? 'background:#d1fae5;color:#065f46' : 'background:#f1f5f9;color:#475569'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button onclick="openRoleModal('${u.id}','${u.name}','${u.role}')" class="btn btn-outline btn-xs">Change Role</button>
-        <button onclick="toggleUserActive('${u.id}',${u.is_active})" class="btn btn-xs" style="${u.is_active ? 'background:#fee2e2;color:#991b1b;border:none' : 'background:#d1fae5;color:#065f46;border:none'}">${u.is_active ? 'Deactivate' : 'Activate'}</button>
-      </td>
-     </tr>
-  `).join('') || '睦<td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No users</td></tr>';
+  tbody.innerHTML = allUsers.map(u => `<tr><td style="font-weight:600">${u.name}</td><td>${u.email}</td><td><span class="badge role-${u.role}">${u.role.toUpperCase()}</span></td><td><span class="badge" style="${u.is_active ? 'background:#d1fae5;color:#065f46' : 'background:#f1f5f9;color:#475569'}">${u.is_active ? 'Active' : 'Inactive'}</span></td><td><button onclick="openRoleModal('${u.id}','${u.name}','${u.role}')" class="btn btn-outline btn-xs">Change Role</button> <button onclick="toggleUserActive('${u.id}',${u.is_active})" class="btn btn-xs" style="${u.is_active ? 'background:#fee2e2;color:#991b1b' : 'background:#d1fae5;color:#065f46'}">${u.is_active ? 'Deactivate' : 'Activate'}</button></td></tr>`).join('') || '<tr><td colspan="5">No users</td></tr>';
 }
 
-function openCreateUser() {
-  document.getElementById('uId').value = '';
-  document.getElementById('uName').value = '';
-  document.getElementById('uEmail').value = '';
-  document.getElementById('uRole').value = '';
-  document.getElementById('uPassword').value = '';
-  document.getElementById('userModalTitle').textContent = 'Create User';
-  document.getElementById('userModal').style.display = 'flex';
-}
+function openCreateUser() { document.getElementById('userModalTitle').textContent = 'Create User'; document.getElementById('uId').value = ''; document.getElementById('uName').value = ''; document.getElementById('uEmail').value = ''; document.getElementById('uRole').value = 'csr'; document.getElementById('uPassword').value = ''; document.getElementById('userModal').style.display = 'flex'; }
 
 async function saveUser(e) {
   e.preventDefault();
-  const name = document.getElementById('uName').value;
-  const email = document.getElementById('uEmail').value;
-  const role = document.getElementById('uRole').value;
-  const password = document.getElementById('uPassword').value;
-  
-  if (!password || password.length < 6) {
-    showToast('Password must be at least 6 characters', 'error');
-    return;
-  }
-  
-  const data = await apiFetch('/api/users', {
-    method: 'POST',
-    body: JSON.stringify({ name, email, role, password })
-  });
-  
-  if (data && data.id) {
-    allUsers.unshift(data);
-    renderUsers();
-    closeModal('userModal');
-    showToast(`User ${data.name} created successfully`);
-  } else {
-    showToast('Failed to create user', 'error');
-  }
+  const data = await apiFetch('/api/users', { method: 'POST', body: JSON.stringify({ name: document.getElementById('uName').value, email: document.getElementById('uEmail').value, role: document.getElementById('uRole').value, password: document.getElementById('uPassword').value }) });
+  if (data?.id) { allUsers.unshift(data); renderUsers(); closeModal('userModal'); showToast('User created'); } else showToast('Failed to create user', 'error');
 }
 
-function openRoleModal(id, name, currentRole) {
-  document.getElementById('roleUserId').value = id;
-  document.getElementById('roleUserName').textContent = name;
-  document.getElementById('newRole').value = currentRole;
-  document.getElementById('roleModal').style.display = 'flex';
-}
+function openRoleModal(id, name, role) { document.getElementById('roleUserId').value = id; document.getElementById('roleUserName').textContent = name; document.getElementById('newRole').value = role; document.getElementById('roleModal').style.display = 'flex'; }
 
 async function saveRole() {
-  const userId = document.getElementById('roleUserId').value;
-  const newRole = document.getElementById('newRole').value;
-  
-  const data = await apiFetch(`/api/users/${userId}/role`, {
-    method: 'PATCH',
-    body: JSON.stringify({ role: newRole })
-  });
-  
-  if (data && data.id) {
-    const index = allUsers.findIndex(u => u.id === userId);
-    if (index !== -1) allUsers[index] = data;
-    renderUsers();
-    closeModal('roleModal');
-    showToast(`Role updated to ${newRole}`);
-  } else {
-    showToast('Failed to update role', 'error');
-  }
+  const data = await apiFetch(`/api/users/${document.getElementById('roleUserId').value}/role`, { method: 'PATCH', body: JSON.stringify({ role: document.getElementById('newRole').value }) });
+  if (data?.id) { const idx = allUsers.findIndex(u => u.id === data.id); if (idx !== -1) allUsers[idx] = data; renderUsers(); closeModal('roleModal'); showToast('Role updated'); } else showToast('Failed to update role', 'error');
 }
 
-async function toggleUserActive(userId, isActive) {
-  const data = await apiFetch(`/api/users/${userId}/active`, {
-    method: 'PATCH',
-    body: JSON.stringify({ is_active: !isActive })
-  });
-  
-  if (data && data.id) {
-    const index = allUsers.findIndex(u => u.id === userId);
-    if (index !== -1) allUsers[index] = data;
-    renderUsers();
-    showToast(`User ${data.name} ${!isActive ? 'activated' : 'deactivated'}`);
-  } else {
-    showToast('Failed to update user status', 'error');
-  }
+async function toggleUserActive(id, isActive) {
+  const data = await apiFetch(`/api/users/${id}/active`, { method: 'PATCH', body: JSON.stringify({ is_active: !isActive }) });
+  if (data?.id) { const idx = allUsers.findIndex(u => u.id === data.id); if (idx !== -1) allUsers[idx] = data; renderUsers(); showToast(`User ${!isActive ? 'activated' : 'deactivated'}`); } else showToast('Failed to update status', 'error');
 }
 </script>
 </body>

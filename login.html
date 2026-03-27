@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,9 +120,7 @@
       <p class="subtitle">Dashboard Access</p>
     </div>
     
-    <div class="error-message" id="error-message">
-      <i class="fas fa-exclamation-circle"></i> Invalid credentials
-    </div>
+    <div class="error-message" id="error-message"></div>
     
     <form id="login-form">
       <div class="input-group">
@@ -139,7 +136,6 @@
   </div>
 
   <script>
-    // FIX: Removed trailing slash from API_URL to prevent double-slash in fetch URL
     const API_URL = 'https://cartomarto-api.borntow2.workers.dev';
     
     document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -151,7 +147,7 @@
       const loginBtn = document.getElementById('login-btn');
       
       if (!email || !password) {
-        errorDiv.textContent = 'Please enter email and password';
+        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter email and password';
         errorDiv.style.display = 'block';
         return;
       }
@@ -170,15 +166,25 @@
         const data = await response.json();
         
         if (response.ok && data.token) {
+          // Clear any existing data first
+          localStorage.clear();
+          
+          // Store new token and user data
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          window.location.href = '/';
+          
+          // Debug: verify token was saved
+          console.log('Token saved:', localStorage.getItem('token'));
+          
+          // Redirect to dashboard
+          window.location.replace('/index.html');
         } else {
-          errorDiv.textContent = data.error || 'Login failed';
+          errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.error || 'Invalid credentials');
           errorDiv.style.display = 'block';
         }
       } catch (error) {
-        errorDiv.textContent = 'Network error. Please try again.';
+        console.error('Login error:', error);
+        errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Network error. Please try again.';
         errorDiv.style.display = 'block';
       } finally {
         loginBtn.disabled = false;

@@ -521,7 +521,7 @@ export default {
       }
     }
     
-    // Update user active status (admin only)
+        // Update user active status (admin only)
     if (method === 'PATCH' && url.pathname.match(/^\/api\/users\/[^/]+\/active$/)) {
       const auth = await checkAuth(request);
       if (!auth.valid) {
@@ -570,7 +570,58 @@ export default {
       }
     }
     
+    // Delete user (admin only)
+    if (method === 'DELETE' && url.pathname.match(/^\/api\/users\/[^/]+$/)) {
+      const auth = await checkAuth(request);
+      if (!auth.valid) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: corsHeaders
+        });
+      }
+      
+      // Only admin can delete users
+      if (auth.user.role !== 'admin') {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403,
+          headers: corsHeaders
+        });
+      }
+      
+      try {
+        const db = env.DB;
+        const userId = url.pathname.split('/')[3];
+        
+        // Prevent deleting own account
+        if (userId === auth.user.id) {
+          return new Response(JSON.stringify({ error: 'Cannot delete your own account' }), {
+            status: 400,
+            headers: corsHeaders
+          });
+        }
+        
+        // Check if user exists
+        const userToDelete = await db.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first();
+        if (!userToDelete) {
+          return new Response(JSON.stringify({ error: 'User not found' }), {
+            status: 404,
+            headers: corsHeaders
+          });
+        }
+        
+        await db.prepare('DELETE FROM users WHERE id = ?').bind(userId).run();
+        return new Response(JSON.stringify({ success: true, message: 'User deleted successfully' }), { headers: corsHeaders });
+      } catch (error) {
+        console.error('Delete user error:', error);
+        return new Response(JSON.stringify({ error: 'Failed to delete user' }), {
+          status: 500,
+          headers: corsHeaders
+        });
+      }
+    }
+    
     // ==================== ANALYTICS ENDPOINTS ====================
+  
     
     // Enhanced stats for admin/manager
     if (method === 'GET' && url.pathname === '/api/stats') {

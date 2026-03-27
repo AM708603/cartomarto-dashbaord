@@ -734,44 +734,60 @@ function applyOrderFilters() {
   document.getElementById('ordersPagination').textContent = `Showing ${Math.min(filtered.length, 100)} of ${filtered.length} orders`;
 }
 
-// ── USER MANAGEMENT (Mock) ─────────────────────────────────────────────────
-let mockUsers = [
-  { id: 1, name: 'Admin User', email: 'admin@cartomarto.com', role: 'admin', isActive: true, createdAt: new Date().toISOString() },
-  { id: 2, name: 'Manager User', email: 'manager@cartomarto.com', role: 'manager', isActive: true, createdAt: new Date().toISOString() },
-  { id: 3, name: 'CSR User', email: 'csr@cartomarto.com', role: 'csr', isActive: true, createdAt: new Date().toISOString() }
-];
-
-function loadMockUsers() {
-  allUsers = mockUsers;
-  renderUsers();
+// ── USER MANAGEMENT (Real API) ─────────────────────────────────────────────────
+async function fetchUsers() {
+  const data = await apiFetch('/api/users');
+  if (data) {
+    allUsers = data;
+    renderUsers();
+  }
 }
 
-function renderUsers() {
-  const tbody = document.getElementById('usersBody');
-  tbody.innerHTML = allUsers.map(u => `
-    <tr>
-      <td style="font-weight:600">${u.name}</td>
-      <td style="color:var(--muted)">${u.email}</td>
-      <td><span class="badge role-${u.role}">${u.role.toUpperCase()}</span></td>
-      <td><span class="badge" style="${u.isActive ? 'background:#d1fae5;color:#065f46' : 'background:#f1f5f9;color:#475569'}">${u.isActive ? 'Active' : 'Inactive'}</span></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button onclick="openRoleModal(${u.id},'${u.name}','${u.role}')" class="btn btn-outline btn-xs">Change Role</button>
-        <button onclick="toggleUserActive(${u.id},${u.isActive})" class="btn btn-xs" style="${u.isActive ? 'background:#fee2e2;color:#991b1b;border:none' : 'background:#d1fae5;color:#065f46;border:none'}">${u.isActive ? 'Deactivate' : 'Activate'}</button>
-      </td>
-     </tr>
-  `).join('') || '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No users</td></tr>';
+async function createUser(userData) {
+  const data = await apiFetch('/api/users', {
+    method: 'POST',
+    body: JSON.stringify(userData)
+  });
+  if (data && data.id) {
+    allUsers.unshift(data);
+    renderUsers();
+    showToast(`User ${data.name} created successfully`);
+    return true;
+  }
+  return false;
 }
 
-function openCreateUser() {
-  document.getElementById('uId').value = '';
-  document.getElementById('uName').value = '';
-  document.getElementById('uEmail').value = '';
-  document.getElementById('uRole').value = '';
-  document.getElementById('uPassword').value = '';
-  document.getElementById('userModalTitle').textContent = 'Create User';
-  document.getElementById('userModal').style.display = 'flex';
+async function updateUserRole(userId, newRole) {
+  const data = await apiFetch(`/api/users/${userId}/role`, {
+    method: 'PATCH',
+    body: JSON.stringify({ role: newRole })
+  });
+  if (data && data.id) {
+    const index = allUsers.findIndex(u => u.id === userId);
+    if (index !== -1) allUsers[index] = data;
+    renderUsers();
+    showToast(`Role updated to ${newRole}`);
+    return true;
+  }
+  return false;
 }
 
+async function updateUserStatus(userId, isActive) {
+  const data = await apiFetch(`/api/users/${userId}/active`, {
+    method: 'PATCH',
+    body: JSON.stringify({ is_active: isActive })
+  });
+  if (data && data.id) {
+    const index = allUsers.findIndex(u => u.id === userId);
+    if (index !== -1) allUsers[index] = data;
+    renderUsers();
+    showToast(`User ${data.name} ${isActive ? 'activated' : 'deactivated'}`);
+    return true;
+  }
+  return false;
+}
+
+// Update saveUser function
 async function saveUser(e) {
   e.preventDefault();
   const name = document.getElementById('uName').value;
@@ -784,47 +800,35 @@ async function saveUser(e) {
     return;
   }
   
-  const newUser = {
-    id: Date.now(),
-    name,
-    email,
-    role,
-    isActive: true,
-    createdAt: new Date().toISOString()
-  };
-  
-  allUsers.unshift(newUser);
-  renderUsers();
-  closeModal('userModal');
-  showToast(`User ${name} created successfully`);
+  const success = await createUser({ name, email, role, password });
+  if (success) {
+    closeModal('userModal');
+    document.getElementById('userModal').querySelector('form').reset();
+  }
 }
 
+// Update openRoleModal and saveRole
+let currentRoleUserId = null;
+
 function openRoleModal(id, name, currentRole) {
-  document.getElementById('roleUserId').value = id;
+  currentRoleUserId = id;
   document.getElementById('roleUserName').textContent = name;
   document.getElementById('newRole').value = currentRole;
   document.getElementById('roleModal').style.display = 'flex';
 }
 
 async function saveRole() {
-  const id = parseInt(document.getElementById('roleUserId').value);
   const newRole = document.getElementById('newRole').value;
-  const userIndex = allUsers.findIndex(u => u.id === id);
-  
-  if (userIndex !== -1) {
-    allUsers[userIndex].role = newRole;
-    renderUsers();
+  const success = await updateUserRole(currentRoleUserId, newRole);
+  if (success) {
     closeModal('roleModal');
-    showToast(`Role updated to ${newRole}`);
   }
 }
 
-function toggleUserActive(id, isActive) {
-  const userIndex = allUsers.findIndex(u => u.id === id);
-  if (userIndex !== -1) {
-    allUsers[userIndex].isActive = !isActive;
-    renderUsers();
-    showToast(`User ${allUsers[userIndex].name} ${!isActive ? 'activated' : 'deactivated'}`);
+async function toggleUserActive(userId, isActive) {
+  const success = await updateUserStatus(userId, !isActive);
+  if (!success) {
+    showToast('Failed to update user status', 'error');
   }
 }
 </script>
